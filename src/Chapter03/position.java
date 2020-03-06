@@ -1,6 +1,6 @@
 package Chapter03;
 
-import Chapter02.TimeTool.TimeTool;
+import Chapter03.TimeTool.TimeTool;
 
 /**
  * @Description:
@@ -8,9 +8,22 @@ import Chapter02.TimeTool.TimeTool;
  * @date: 2020/2/28 0028 19:40
  */
 public class position {
-    class point{
+    static class point{
         int x;
         int y;
+
+        @Override
+        public boolean equals(Object obj) {
+            return  (((point)obj).x==x&&((point)obj).y==y);
+        }
+
+        public point() {
+        }
+
+        public point(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
 
         @Override
         public String toString() {
@@ -50,6 +63,11 @@ public class position {
             points[i] = new point();
             points[i].x=(int)(Math.random()*size);
             points[i].y=(int)(Math.random()*size);
+            for (int j=0;j<i;j++){
+                if (points[i].x==points[j].x&&points[i].y==points[j].y){
+                    i--;
+                }
+            }
         }
         return points;
     }

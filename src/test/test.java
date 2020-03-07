@@ -25,6 +25,7 @@ public class test {
 //            i++;
 //        }
 //    }
-        System.out.println();
+        Integer a = 103;
+        System.out.println(Integer.toBinaryString(a));
     }
 }

@@ -78,7 +78,7 @@ public class ConvexHull extends position {
     public static void main(String[] args) {
         ConvexHull position = new ConvexHull();
         point[] points
-                =position.point(5, 100);
+                =position.point(20, 100);
 //                ={new point(8,7),new point(7,2),new point(7,6),new point(4,2),new point(6,1)};
 
 
@@ -94,11 +94,13 @@ public class ConvexHull extends position {
             @Override
             public void execute() {
                 List<Vector> list = position.solution(points);
-                System.out.println(list.size());
+                System.out.println("边数"+list.size());
                 List<Vector> sort = position.sort(list);
                 System.out.println();
-                for (Vector vector : sort) {
-                    System.out.print(vector.start + "->");
+                for (int i=0;i<sort.size();i++) {
+
+                    if (!(i==sort.size()-1)) System.out.print(sort.get(i).start + "->");
+                    else System.out.println(sort.get(i).start);
                 }
             }
         });

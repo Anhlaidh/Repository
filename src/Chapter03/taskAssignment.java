@@ -32,24 +32,36 @@ public class taskAssignment {
         }
         return totalCost;
     }
-    void getAllPlans(Integer[][] tasks,List<Integer> currentList,List<List<Integer>> plans,int begin){
-        if (currentList.size()==tasks.length){
-            plans.add(new ArrayList<>(currentList));
-        }else {
-            for (int current=begin;current<tasks[0].length;current++){
-//                if (currentList.contains(current)) continue;
-                currentList.add(current);
-                getAllPlans(tasks, currentList, plans, current);
+    void backtrack(List<List<Integer>> lists,List<Integer> currentList,int[] num){
+        if (currentList.size()==num.length){
+            lists.add(new ArrayList<>(currentList));
+            return;
 
+        }else {
+            for (int i=0;i<num.length;i++){
+                if (currentList.contains(num[i])) continue;
+                currentList.add(num[i]);
+
+                backtrack(lists, currentList, num);
                 currentList.remove(currentList.size()-1);
             }
         }
+    }
 
+    public List<List<Integer>> permute(int[] nums) {
+        List<Integer> currentList = new ArrayList<>();
+        List<List<Integer>> lists =  new ArrayList<>();
+        backtrack(lists,currentList,nums);
+        return lists;
     }
     List<List<Integer>> getPlans(Integer[][] tasks){
         List<Integer> currentList = new ArrayList<>();
         List<List<Integer>> plans =  new ArrayList<>();
-        getAllPlans(tasks,currentList,plans,0);
+        int[] nums = new  int[tasks.length];
+        for (int i=0;i<nums.length;i++){
+            nums[i] = i;
+        }
+        backtrack(plans,currentList,nums);
         return plans;
     }
     public Integer[] solution(List<List<Integer>> plans,Integer[][] tasks){
@@ -73,25 +85,25 @@ public class taskAssignment {
         taskAssignment taskAssignment = new taskAssignment();
         Integer[][] tasks = taskAssignment.init(5,10);
         List<List<Integer>> plans = taskAssignment.getPlans(tasks);
-        System.out.println(plans);
-//        TimeTool.check("Task_Assignment", new TimeTool.Task() {
-//            @Override
-//            public void execute() {
-//                List<List<Integer>> plans = taskAssignment.getPlans(tasks);
-//                Integer[] res = taskAssignment.solution(plans, tasks);
-//                System.out.println("任务坐标:");
-//                for (int i=0;i<tasks.length;i++){
-//                    for (int j=0;j<tasks[i].length;j++){
-//                        if (j==res[i]) {
-//                            System.out.print("["+tasks[i][j]+"]"+" ");
-//                            continue;
-//                        }
-//                        System.out.print(tasks[i][j]+" ");
-//                    }
-//                    System.out.println();
-//                }
-//            }
-//        });
+//        System.out.println(plans);
+        TimeTool.check("Task_Assignment", new TimeTool.Task() {
+            @Override
+            public void execute() {
+                List<List<Integer>> plans = taskAssignment.getPlans(tasks);
+                Integer[] res = taskAssignment.solution(plans, tasks);
+                System.out.println("任务坐标:");
+                for (int i=0;i<tasks.length;i++){
+                    for (int j=0;j<tasks[i].length;j++){
+                        if (j==res[i]) {
+                            System.out.print("["+tasks[i][j]+"]"+" ");
+                            continue;
+                        }
+                        System.out.print(tasks[i][j]+" ");
+                    }
+                    System.out.println();
+                }
+            }
+        });
 
     }
 }

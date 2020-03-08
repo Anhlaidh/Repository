@@ -64,34 +64,43 @@ public class bagQuestion {
         if (items==null||items.size()==0){
             return lists;
         }
-        backtrack(items,list,lists);
+        backtrack(items,list,lists,0);
 //        for (int i=0;i<items.size();i++){
 //
 //        }
         return lists;
     }
 
-    public void backtrack(List<item> items, List<item> currentList, List<List<item>> lists){
+    public void backtrack(List<item> items, List<item> currentList, List<List<item>> lists,int current){
         if (currentList.size()==items.size()){
 
             return;
         }
       else {
-            for (item item:items){
-              if (currentList.contains(item)) continue;
-              currentList.add(item);
-              backtrack(items,currentList,lists);
+//            for (item item:items){
+//              if (currentList.contains(item)) continue;
+//              currentList.add(item);
+//              backtrack(items,currentList,lists);
+////                System.out.println(currentList);
+//                lists.add(new ArrayList<>(currentList));
+//              currentList.remove(currentList.size()-1);
+//          }
+            for (;current<items.size();current++){
+                if (currentList.contains(items.get(current))) continue;
+                currentList.add(items.get(current));
+                backtrack(items,currentList,lists,current);
 //                System.out.println(currentList);
                 lists.add(new ArrayList<>(currentList));
-              currentList.remove(currentList.size()-1);
-          }
+
+                currentList.remove(currentList.size()-1);
+            }
       }
     }
 
     public static void main(String[] args) {
         bagQuestion bagQuestion = new bagQuestion();
-        List<item> items = bagQuestion.items(5, 10, 3);
-        List<List<item>> lists = bagQuestion.getList(items);
+        List<item> items = bagQuestion.items(10, 10, 3);
+
 //for (List<item> list:lists){
 //    System.out.println(list);
 //}
@@ -99,8 +108,10 @@ public class bagQuestion {
         TimeTool.check("01bag", new TimeTool.Task() {
             @Override
             public void execute() {
+                List<List<item>> lists = bagQuestion.getList(items);
                 List<item> solution = bagQuestion.solution(5, lists);
                 System.out.println(solution);
+                //递归加入current后，2s--->0.003s
             }
         });
 

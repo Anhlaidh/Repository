@@ -1,0 +1,12 @@
+@startuml
+start
+:helloworld;
+if() then (yes)
+: a;
+
+
+else
+end
+
+
+@enduml

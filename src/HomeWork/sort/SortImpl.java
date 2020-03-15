@@ -1,10 +1,6 @@
 package HomeWork.sort;
 
-import HomeWork.sort.ISort;
-
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * @Description:
@@ -13,9 +9,45 @@ import java.util.List;
  */
 public class SortImpl implements ISort {
     @Override
-    public void QuickSort(int[] array) {
+    public int[] QuickSort(int[] array) {
+        if (array.length<=1) return array;
+        int mid = array[0];
+        int left=1;
+        int current=0;
+        int right=array.length-1;
+       while (left!=right){
+           while (left!=right){
+               if (array[right]>=mid) right--;
+               else {
+                   array[current] = array[right];
+                   current = right;
+                   right--;
+                   break;
+               }
+           }
+          while (left!=right){
+
+              if (array[left]<mid) left++;
+              else {
+                  array[current] = array[left];
+                  current = left;
+                  left++;
+                  break;
+              }
+          }
+
+       }
+        int[] l = Arrays.copyOfRange(array, 0, current);
+        int[] r = Arrays.copyOfRange(array, current + 1, array.length);
+        int[] l_sort = QuickSort(l);
+        int[] r_sort = QuickSort(r);
+        array[current] = mid;
+        System.arraycopy(l_sort,0,array,0,l_sort.length);
+        System.arraycopy(r_sort,0,array,current+1,r_sort.length);
+        return array;
 
     }
+
 
     @Override
     public void MergeSort(int[] array) {

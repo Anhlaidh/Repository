@@ -1,6 +1,6 @@
 package HomeWork.Chapter03;
 
-import HomeWork.Chapter01.TimeTool.TimeTool;
+import HomeWork.TimeTool.TimeTool;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

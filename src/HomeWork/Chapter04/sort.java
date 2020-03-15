@@ -1,6 +1,9 @@
 package HomeWork.Chapter04;
 
 import HomeWork.sort.SortImpl;
+import base.TimeTool.TimeTool;
+
+import java.util.Random;
 
 /**
  * @Description:
@@ -9,10 +12,39 @@ import HomeWork.sort.SortImpl;
  */
 public class sort {
     public static void main(String[] args) {
-        int[] array = {5,2,3,1,7,11,88,33,44,100};//
-        SortImpl sort = new SortImpl();
-//        sort.MergeSort(array);
 
-        for (int a:sort.QuickSort(array)) System.out.println(a);
+        SortImpl sort = new SortImpl();
+        Random random = new Random();
+//
+
+        TimeTool.check("QuickSort", new TimeTool.Task() {
+            @Override
+            public void execute() {
+                int[] array =random.ints(30,0,100).toArray();//
+//                sort.QuickSort(array);
+                for (int a:sort.QuickSort(array)) System.out.println(a);
+            }
+        });
+        TimeTool.check("MergeSort", new TimeTool.Task() {
+            @Override
+            public void execute() {
+                int[] array =random.ints(30,0,100).toArray();
+                sort.MergeSort(array);
+            }
+        });
+        TimeTool.check("BubbleSort", new TimeTool.Task() {
+            @Override
+            public void execute() {
+                int[] array =random.ints(30,0,100).toArray();
+                sort.BubbleSort(array);
+            }
+        });
+        TimeTool.check("SelectSort", new TimeTool.Task() {
+            @Override
+            public void execute() {
+                int[] array =random.ints(30,0,100).toArray();
+                sort.SelectSort(array);
+            }
+        });
     }
 }

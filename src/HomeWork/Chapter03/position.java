@@ -1,6 +1,6 @@
 package HomeWork.Chapter03;
 
-import HomeWork.Chapter03.TimeTool.TimeTool;
+import HomeWork.TimeTool.TimeTool;
 
 /**
  * @Description:

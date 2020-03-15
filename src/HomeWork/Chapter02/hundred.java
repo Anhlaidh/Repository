@@ -1,7 +1,7 @@
 package HomeWork.Chapter02;
 
 
-import HomeWork.Chapter03.TimeTool.TimeTool;
+import HomeWork.TimeTool.TimeTool;
 
 /**
  * @Description: cock->5 hen->3 chick->1/3

@@ -9,7 +9,7 @@ import java.math.BigInteger;
  */
 public class testBigInteger {
     public static void main(String[] args) {
-        BigInteger b1 = new BigInteger("123456789");
+        BigInteger b1 = new BigInteger("123456789999999999999999999999999999999999999999999999999999999");
         BigInteger b2 = new BigInteger("987654321");
         System.out.println("加法操作："+b2.add(b1));
         System.out.println("减法操作："+b2.subtract(b1));

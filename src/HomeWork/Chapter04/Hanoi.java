@@ -14,11 +14,7 @@ public class Hanoi {
             hanoi(n-1,A,C,B);
             System.out.print(A+"->"+C+"  ");
             hanoi(n-1,B,A,C);
-
         }
-
-
-
     }
     public static void main(String[] args) {
         Hanoi hanoi = new Hanoi();

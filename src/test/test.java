@@ -1,6 +1,7 @@
 package test;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 
 /**
  * @Description: boolean
@@ -25,7 +26,9 @@ public class test {
 //            i++;
 //        }
 //    }
+//        Arrays.sort();
         Integer a = 103;
         System.out.println(Integer.toBinaryString(a));
+        System.out.println("a".compareTo("b"));
     }
 }

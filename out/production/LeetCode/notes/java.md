@@ -223,4 +223,15 @@ throws:抛出异常
     - 基于红黑树的Map，可以根据key的自然排序，按照key的从大到小或者compareTo方法进行排序输出
 - Properties 同步，文件形式，数据量小    
     ![Properties](.java_images/Properties.png)
-    
+    ![get&writeProperties](.java_images/get&writeProperties.png)
+    ![main&getValue](.java_images/main&getValue.png)
+
+### Util
+
+-Arrays
+    ![Arrays](.java_images/Arrays.png)
+       补充（fill(数组名，开始位数，结束位数，值))
+-Collections
+    ![](.java_images/021a01f2.png)
+    -对象的比较
+    ![comparable](.java_images/eb55ee78.png)

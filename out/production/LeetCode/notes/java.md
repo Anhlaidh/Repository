@@ -108,4 +108,94 @@
     ![DateFormat](.java_images/DateFormat.png)
     ![DateFormat](.java_images/2020-03-11-20-00-15.png)
 4. DateFormatter
-    ![DateFormatter](.java_images/DateFormatter.png)
+    ![DateFormatter](.java_images/DateFormatter.png)   
+
+### Exception
+
+## 异常分类
+
+- 异常：程序不正常的行为或状态
+- 异常处理：
+    1. 程序返回到安全状态
+    2. 允许用户保存结果，并以适当方式关闭程序
+- 异常分类
+- ![异常分类](.java_images/异常分类.png)   
+    1. Throwable:所有错误的祖先
+    2. Error：系统内部错误或者资源耗尽
+    3. Exception：程序有关错误
+- 又可分为unchecked异常和checked异常，
+- 编译器会辅助检查checked异常    
+
+## 异常处理
+![try&catch](.java_images/try&catch.png)    
+try：正常逻辑代码
+catch：当try发生异常，将执行catch代码，若无异常，绕之
+finally：当try或者catch执行后，必须要执行finally
+- ![try](.java_images/try.png)
+- 一个try只会进入一个catch，优先级从上而下
+![catch](.java_images/catch.png)
+
+throws:抛出异常
+- ![Throws](.java_images/Throws.png)
+- 一个方法被覆盖，覆盖他的方法必须抛出相同的异常，或者异常的子类
+- 如果父类方法抛出多个异常，那么重写的子类方法必须抛出那些异常的子集，也就是不能抛出新的异常
+    - ![父类](.java_images/父类.png)
+    - ![子类](.java_images/子类.png)    
+    
+## 自定义异常
+
+- 自定义异常，需要继承Exception类或者其子类
+    - 继承自Exception就变成CheckedException
+    - 继承自RuntimeException，就变成Unchecked Exception
+- 自定义重点在构造函数
+    - 调用父类Exception的message构造函数
+    - 可以自定义自己的成员变量
+- 在程序中采用throw主动抛出异常
+    ![代码](.java_images/代码.png) 
+    - 异常抛出测试
+    - ![代码](.java_images/daa3ad77.png)
+## 数组
+
+1. 数组是一种确定大小的储存同种数据的容器
+2. 初始化和遍历方法
+
+## JCF
+
+1. 容器框架的作用
+2. JCF主要数据结构
+    - 列表
+    - 集合
+    - 映射
+
+### List
+1. ArrayList ：for循环遍历最快，迭代器最慢 索引位置适中
+    -  遍历快
+2. LinkedList ：for循环遍历最快，迭代器适中，索引位置极慢
+    - 插入快
+3. Vector（同步）
+    - 和ArrayList类似，可变数组实现的列表
+    - Vector同步，适合再 ==多线程== 下使用
+    
+    
+- 迭代器
+    - ![迭代器](.java_images/迭代器.png)
+###  Set
+
+- 确定性：对任意对象都能判定其是否属于某一集合
+- 互异性：集合内每个元素都是不相同的，<u>注意是内容互异</u>
+- 无序性：集合内的顺序无关
+
+#### java中的集合接口Set
+
+- HashSet(基于散列函数的集合，无序，不支持同步)
+    ![HashSet](.java_images/HashSet.png)
+    - 无序，遍历for快于iterator
+    
+- LinkedHashSet(基于散列函数和双向链表的集合，可排序的，不支持同步)
+    ![LinkedHashSet](.java_images/LinkedHashSet.png)
+    - 有序，for快于iterator
+
+- TreeSet(基于树结构的集合，可排序的，不支持同步)
+    ![TreeSet](.java_images/TreeSet.png)
+
+    

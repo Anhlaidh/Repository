@@ -1,4 +1,4 @@
-package JavaLeaning.JCF;
+package JavaLeaning.JCF.Set;
 
 import java.util.LinkedHashSet;
 

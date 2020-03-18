@@ -193,9 +193,34 @@ throws:抛出异常
     
 - LinkedHashSet(基于散列函数和双向链表的集合，可排序的，不支持同步)
     ![LinkedHashSet](.java_images/LinkedHashSet.png)
-    - 有序，for快于iterator
+    - 存储数据是插入的顺序序，for快于iterator
 
 - TreeSet(基于树结构的集合，可排序的，不支持同步)
     ![TreeSet](.java_images/TreeSet.png)
+    - 不可有null，按着从小到大的顺序存储，for快于iterator
+    
+> HashSet&&LinkedHashSet 的比较是通过hashcode比较的，若想要new的新对象根据自定义要求去重，重写hashcode方法
+>
+>   1. 判定两个元素的hashCode是否想通，若不同，返回false
+>   2. 若两者hashCode相同，判定equals犯法，若不同，返回false，否则返回true
+>   3. hashCode和equals方法是所有类都有的，因为Object类有
+>![Override](.java_images/9692a1c5.png)
+>TreeSet判断重复利用compareTo方法，实体类需要继承Comparable接口，然后重写CompareTo方法  
+> - 补充：Integer类重写了CompareTo方法
+>   ![CompareTo](.java_images/11c71953.png)
+    
+### Map
 
+- Hashtable 同步，慢，数据量小   t是小写
+    ![Hashtable](.java_images/Hashtable.png)
+    ![Iterator遍历](.java_images/9d857dc3.png)
+- HashMap 不支持同步，快，数据量打
+    ![HashMap](.java_images/HashMap.png)
+    - 遍历有iterator方法和KeySet方法（hashMap.get(key)）,KeySet方法速度更快
+- LinkedHashMap
+    - 基于双向链表的维持<u>插入顺序</u>的HashMap
+- TreeMap
+    - 基于红黑树的Map，可以根据key的自然排序，按照key的从大到小或者compareTo方法进行排序输出
+- Properties 同步，文件形式，数据量小    
+    ![Properties](.java_images/Properties.png)
     

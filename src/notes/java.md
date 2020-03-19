@@ -201,8 +201,8 @@ throws:抛出异常
     
 > HashSet&&LinkedHashSet 的比较是通过hashcode比较的，若想要new的新对象根据自定义要求去重，重写hashcode方法
 >
->   1. 判定两个元素的hashCode是否想通，若不同，返回false
->   2. 若两者hashCode相同，判定equals犯法，若不同，返回false，否则返回true
+>   1. 判定两个元素的hashCode是否相同，若不同，返回false
+>   2. 若两者hashCode相同，判定equals方法，若不同，返回false，否则返回true
 >   3. hashCode和equals方法是所有类都有的，因为Object类有
 >![Override](.java_images/9692a1c5.png)
 >TreeSet判断重复利用compareTo方法，实体类需要继承Comparable接口，然后重写CompareTo方法  
@@ -228,11 +228,21 @@ throws:抛出异常
 
 ### Util
 
--Arrays
-    ![Arrays](.java_images/Arrays.png)
-       补充（fill(数组名，开始位数，结束位数，值))
--Collections
-    ![](.java_images/021a01f2.png)
-    -对象的比较
-    ![comparable](.java_images/eb55ee78.png)
+- Arrays  
+    ![Arrays](.java_images/Arrays.png)  
+       - 补充（fill(数组名，开始位数，结束位数，值))  
+- Collections  
+    ![](.java_images/021a01f2.png)  
+    -对象的比较  
+    ![comparable](.java_images/eb55ee78.png)  
     
+## File
+
+- ![文件概述](.java_images/27479294.png)
+- 文件系统和java是并列的两套系统
+- File类是文件基本属性操作的主要类
+- java7提出了NIO包在某些功能上有重要的补充作用
+-   ![testPath](.java_images/testPath.png)
+-   ![testFile](.java_images/testFile.png)
+-   ![testFiles1](.java_images/testFiles1.png)
+-   ![testFiles2](.java_images/testFiles2.png)

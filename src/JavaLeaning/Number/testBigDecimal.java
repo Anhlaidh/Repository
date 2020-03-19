@@ -16,7 +16,7 @@ public class testBigDecimal {
         System.out.println("减法操作："+b2.subtract(b1));
         System.out.println("乘法操作："+b2.multiply(b1));
         //需要指定位数，防止无限循环，或者包含在try catch中
-        System.out.println("除法操作："+b2.divide(b1,10,BigDecimal.ROUND_HALF_UP));
+        System.out.println("除法操作："+b2.divide(b1,10,BigDecimal.ROUND_UP));
 
         System.out.println("最大值"+b2.max(b1));
         System.out.println("最小值"+b2.min(b1));

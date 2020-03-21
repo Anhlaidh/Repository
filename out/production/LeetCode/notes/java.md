@@ -239,3 +239,10 @@ throws:抛出异常
 ## File
 
 - ![文件概述](.java_images/27479294.png)
+- 文件系统和java是并列的两套系统
+- File类是文件基本属性操作的主要类
+- java7提出了NIO包在某些功能上有重要的补充作用
+-   ![testPath](.java_images/testPath.png)
+-   ![testFile](.java_images/testFile.png)
+-   ![testFiles1](.java_images/testFiles1.png)
+-   ![testFiles2](.java_images/testFiles2.png)

@@ -1,6 +1,7 @@
 package HomeWork.Chapter03;
 
 import HomeWork.TimeTool.TimeTool;
+import HomeWork.entity.point;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -77,8 +78,7 @@ public class ConvexHull extends position {
     }
     public static void main(String[] args) {
         ConvexHull position = new ConvexHull();
-        point[] points
-                =position.point(20, 100);
+        point[] points =point.initPoint(20, 100);
 //                ={new point(8,7),new point(7,2),new point(7,6),new point(4,2),new point(6,1)};
 
 

@@ -1,6 +1,7 @@
 package HomeWork.Chapter02;
 
 import HomeWork.TimeTool.TimeTool;
+import HomeWork.entity.point;
 
 /**
  * @Description:
@@ -8,22 +9,8 @@ import HomeWork.TimeTool.TimeTool;
  * @date: 2020/2/28 0028 19:40
  */
 public class position {
-    class point{
-        int x;
-        int y;
 
-        @Override
-        public String toString() {
-            return "point(" +
-                     x +
-                    ", " + y +
-                    ')';
-        }
-        public double distanceFrom(point point){
-            double length = Math.sqrt((x-point.x)*(x-point.x)+(y-point.y)*(y-point.y));
-            return length;
-        }
-    }
+
 
 //    static boolean[][] randomMap(int N,int size){
 //        boolean[][] map = new boolean[size][size];

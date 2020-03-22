@@ -5,7 +5,7 @@ package HomeWork.entity;
  * @author: Anhlaidh
  * @date: 2020/3/21 0021 20:17
  */
-public class point {
+public class point implements Comparable{
     public int x;
     public int y;
 
@@ -24,6 +24,7 @@ public class point {
                 ", " + y +
                 ')';
     }
+
 
     public double distanceFrom(point point) {
         double length = Math.sqrt((x - point.x) * (x - point.x) + (y - point.y) * (y - point.y));
@@ -44,4 +45,8 @@ public class point {
         return points;
     }
 
+    @Override
+    public int compareTo(Object o) {
+        return 0;
+    }
 }

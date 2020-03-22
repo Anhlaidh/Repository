@@ -246,3 +246,211 @@ throws:抛出异常
 -   ![testFile](.java_images/testFile.png)
 -   ![testFiles1](.java_images/testFiles1.png)
 -   ![testFiles2](.java_images/testFiles2.png)
+
+## javaIO
+
+![思维导图](.java_images/a65fcb1f.png)
+
+- java文件处理类都在java.io包中
+- 处理类分成：节点类、包装类（转化类、装饰类）
+
+### 文件读写
+
+#### 写入文件
+
+- 写文件
+    - 先创建文件，写入数据，关闭文件
+    - FileOutputStream,OutputStreamWriter,BufferWriter
+    - BufferWriter
+        - write
+        - newLine
+    - try-resource语句，自动关闭资源
+    - 关闭最外层的数据流，将会把其上所有的数据流关闭
+
+```java
+ public class testWrite {
+     public static void main(String[] args) {
+         method_1();
+ //        method_2();
+ 
+     }
+ 
+     public static void method_1() {
+         FileOutputStream fileOutputStream = null;//节点类，负责写字节
+         OutputStreamWriter outputStreamWriter = null;//转化类，负责字符到字节的转化
+         BufferedWriter bufferedWriter = null;//装饰类，负责写字符到缓存区
+         //三者关系bufferedWriter(OutputStreamWriter(FIleOutputStream)))
+ 
+         try {
+             fileOutputStream = new FileOutputStream("./temp/abc.txt");
+             outputStreamWriter = new OutputStreamWriter(fileOutputStream, "UTF-8");
+             bufferedWriter = new BufferedWriter(outputStreamWriter);
+ //            bufferedReader = new BufferedReader(new OutputStreamWriter(new FileOutputStream("./temp.abc")));
+             //一句话的写法
+             outputStreamWriter.write("我们是");//TODO 存疑 javaIO可用outputStreamWrite来输出？
+             bufferedWriter.newLine();
+             bufferedWriter.write("method_1");
+             bufferedWriter.newLine();
+ 
+         } catch (Exception e) {
+             e.printStackTrace();
+         }finally {
+             try {
+                 bufferedWriter.close();//关闭最后一个，会将所有的底层流全部关闭
+             } catch (Exception ex) {
+                 ex.printStackTrace();
+             }
+         }
+     }
+ 
+     public static void method_2() {
+         //try-resource语句,自动关闭资源
+         try (BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("./temp/abc.txt")))) {
+             bufferedWriter.write("我们是");
+             bufferedWriter.newLine();
+             bufferedWriter.write("method_2");
+             bufferedWriter.newLine();
+         } catch (Exception e) {
+             e.printStackTrace();
+         }
+     }
+ }
+
+```
+
+- 读文件
+    - 先打开文件，逐行读入数据，关闭文件
+    - FileInputStream,InputStream,BufferedReader
+    - BufferReader
+        - readLine
+    - try-resource语句，自动关闭资源
+    - 关闭最外层的数据流，将会把其上所有的数据流关闭
+
+```java
+public class testRead {
+    public static void main(String[] args) {
+        method_1();
+        System.out.println("===============");
+        method_2();
+    }
+
+    public static void method_1() {
+        FileInputStream fileInputStream = null;
+        InputStreamReader inputStreamReader = null;
+        BufferedReader bufferedReader = null;
+        String line = "";
+        try {
+            fileInputStream = new FileInputStream("./temp/abc.txt");
+            inputStreamReader = new InputStreamReader(fileInputStream, "UTF-8");
+            bufferedReader = new BufferedReader(inputStreamReader);
+//            bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream("./temp/abc.txt")));
+            while ((line = bufferedReader.readLine()) != null) {
+                System.out.println(line);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                bufferedReader.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    public static void method_2() {
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream("./temp/abc.txt")))) {
+            String line = "";
+            while ((line = bufferedReader.readLine()) != null) {
+                System.out.println(line);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+```
+尽量使用try-resource方法，自动关闭资源
+
+### 二进制文件读写
+
+##写入
+
+- 写文件
+    - 先创建文件，写入数据，关闭文件
+    - FileOutputStream,BufferedOutputStream,DataOutputStream
+    - DataOutputStream
+        - flush 
+        - write/writeBoolean/writeByte/writeChars/writeDouble/writeInt/writeUTF/...
+    - try-source 语句，自动关闭资源
+    - 关闭最外层数据流，将会把其上所有的数据流关闭
+```java
+public class testBinWrite {
+    public static void main(String[] args) {
+        method_1();
+
+    }
+
+    public static void method_1() {
+        FileOutputStream fileOutputStream = null;
+        DataOutputStream dataOutputStream = null;
+        BufferedOutputStream bufferedOutputStream = null;
+        try {
+            fileOutputStream = new FileOutputStream("./temp/def.dat");
+            dataOutputStream = new DataOutputStream(fileOutputStream);
+            bufferedOutputStream = new BufferedOutputStream(dataOutputStream);
+
+            dataOutputStream.writeUTF("a");
+            dataOutputStream.writeInt(222);
+            dataOutputStream.writeUTF("b");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                bufferedOutputStream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+}
+```
+
+- 读文件
+    - 先打开文件，读入数据，关闭文件
+    - FileInputStream,BufferedInputStream,DataInputStream
+    - DataInputStream
+        read/readBoolean/readInt/readChar/readDouble/readFloat/readUTF/...
+    - try-resource语句，自动关闭资源
+    - 关闭最外层的数据流，将会把其上所有的数据流关闭
+    
+```java
+public class testBinRead {
+    public static void main(String[] args) {
+        method_2();
+    }
+
+    //try-resource
+    public static void method_2() {
+        try (DataInputStream dataInputStream = new DataInputStream( new BufferedInputStream(new FileInputStream("./temp/def.dat")))) {
+            String a = dataInputStream.readUTF();
+            int b = dataInputStream.readInt();
+            String c = dataInputStream.readUTF();
+            System.out.println(a);
+            System.out.println(b);
+            System.out.println(c);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+}
+
+```
+总结：
+    - 理解节点类，转换类，包装类的联合用法
+    - 读取需要根据写入的规则进行读取，避免错位
+    - 尽量使用try-resource语句，自动关闭资源
+        

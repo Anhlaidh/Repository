@@ -72,11 +72,10 @@ public class testTriangle {
 - 深入学习：Junit实战（第二版），PetarTahchiey
 
 ## Java字符编码
-
 - 尽可能使用UTF-8
 - 读取写入编码保持一致
 
-### 国际化
+## 国际化
 
 - Locale 方法
     - getAvailableLocales()获取所有可用的locale
@@ -113,9 +112,9 @@ public class HelloWorld {
 }
 ```
 
-### 高级字符编码
+## 高级字符编码
 
-#### 正则表达式
+### 正则表达式
 
 - 学习正则表达式：
 精通正则表达式（第三版） Jefferry E.F.Friedl
@@ -249,3 +248,24 @@ public class String2inputStream {
     }
 }
 ```
+
+## xml
+
+- 常规语法
+    - 任何的起始标签都必须有一个结束标签
+    - 简化写法，例如，<name></name>可以写为<name/>
+    - 大小写敏感，name和Name不一样
+    - 每个文件都要有一个根元素
+    - 标签必须按合适的顺序进行嵌套，不可错位
+    - 所有的特性都必须有值，且在值的周围加上引号
+    - 需要转义字符，如"<"需要用&lt;代替
+        - |转义 | 符号 | 意思 |
+          | --- | --- | --- |
+          |\&lt; | < | 小于|   
+          |\&gt; | \> | 大于 |
+          |\&amp;|&|和号|
+          |\&apos;|'|单引号|
+          |\&quot;|"|双引号|
+    - 注释：&lt;!--  内容  -->
+
+

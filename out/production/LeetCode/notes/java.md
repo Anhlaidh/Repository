@@ -267,46 +267,55 @@ throws:抛出异常
     - try-resource语句，自动关闭资源
     - 关闭最外层的数据流，将会把其上所有的数据流关闭
 
-``` java
- public static void method_1() {
-        FileOutputStream fileOutputStream = null;//节点类，负责写字节
-        OutputStreamWriter outputStreamWriter = null;//转化类，负责字符到字节的转化
-        BufferedWriter bufferedWriter = null;//装饰类，负责写字符到缓存区
-        //三者关系bufferedWriter(OutputStreamWriter(FIleOutputStream)))
+```java
+ public class testWrite {
+     public static void main(String[] args) {
+         method_1();
+ //        method_2();
+ 
+     }
+ 
+     public static void method_1() {
+         FileOutputStream fileOutputStream = null;//节点类，负责写字节
+         OutputStreamWriter outputStreamWriter = null;//转化类，负责字符到字节的转化
+         BufferedWriter bufferedWriter = null;//装饰类，负责写字符到缓存区
+         //三者关系bufferedWriter(OutputStreamWriter(FIleOutputStream)))
+ 
+         try {
+             fileOutputStream = new FileOutputStream("./temp/abc.txt");
+             outputStreamWriter = new OutputStreamWriter(fileOutputStream, "UTF-8");
+             bufferedWriter = new BufferedWriter(outputStreamWriter);
+ //            bufferedReader = new BufferedReader(new OutputStreamWriter(new FileOutputStream("./temp.abc")));
+             //一句话的写法
+             outputStreamWriter.write("我们是");//TODO 存疑 javaIO可用outputStreamWrite来输出？
+             bufferedWriter.newLine();
+             bufferedWriter.write("method_1");
+             bufferedWriter.newLine();
+ 
+         } catch (Exception e) {
+             e.printStackTrace();
+         }finally {
+             try {
+                 bufferedWriter.close();//关闭最后一个，会将所有的底层流全部关闭
+             } catch (Exception ex) {
+                 ex.printStackTrace();
+             }
+         }
+     }
+ 
+     public static void method_2() {
+         //try-resource语句,自动关闭资源
+         try (BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("./temp/abc.txt")))) {
+             bufferedWriter.write("我们是");
+             bufferedWriter.newLine();
+             bufferedWriter.write("method_2");
+             bufferedWriter.newLine();
+         } catch (Exception e) {
+             e.printStackTrace();
+         }
+     }
+ }
 
-        try {
-            fileOutputStream = new FileOutputStream("./temp/abc.txt");
-            outputStreamWriter = new OutputStreamWriter(fileOutputStream, "UTF-8");
-            bufferedWriter = new BufferedWriter(outputStreamWriter);
-//            bufferedReader = new BufferedReader(new OutputStreamWriter(new FileOutputStream("./temp.abc")));
-            //一句话的写法
-            bufferedWriter.write("我们是");
-            bufferedWriter.newLine();
-            bufferedWriter.write("aaaaa");
-            bufferedWriter.newLine();
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-        }finally {
-            try {
-                bufferedWriter.close();//关闭最后一个，会将所有的底层流全部关闭
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-    }
-
-    public static void method_2() {
-        //try-resource语句,自动关闭资源
-        try (BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("./temp/abc.txt")))) {
-            bufferedWriter.write("我们是");
-            bufferedWriter.newLine();
-            bufferedWriter.write("aaaaa");
-            bufferedWriter.newLine();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 ```
 
 - 读文件
@@ -317,8 +326,15 @@ throws:抛出异常
     - try-resource语句，自动关闭资源
     - 关闭最外层的数据流，将会把其上所有的数据流关闭
 
-``` java
- public static void method_1() {
+```java
+public class testRead {
+    public static void main(String[] args) {
+        method_1();
+        System.out.println("===============");
+        method_2();
+    }
+
+    public static void method_1() {
         FileInputStream fileInputStream = null;
         InputStreamReader inputStreamReader = null;
         BufferedReader bufferedReader = null;
@@ -353,6 +369,8 @@ throws:抛出异常
             e.printStackTrace();
         }
     }
+}
+
 ```
 尽量使用try-resource方法，自动关闭资源
 
@@ -368,6 +386,38 @@ throws:抛出异常
         - write/writeBoolean/writeByte/writeChars/writeDouble/writeInt/writeUTF/...
     - try-source 语句，自动关闭资源
     - 关闭最外层数据流，将会把其上所有的数据流关闭
+```java
+public class testBinWrite {
+    public static void main(String[] args) {
+        method_1();
+
+    }
+
+    public static void method_1() {
+        FileOutputStream fileOutputStream = null;
+        DataOutputStream dataOutputStream = null;
+        BufferedOutputStream bufferedOutputStream = null;
+        try {
+            fileOutputStream = new FileOutputStream("./temp/def.dat");
+            dataOutputStream = new DataOutputStream(fileOutputStream);
+            bufferedOutputStream = new BufferedOutputStream(dataOutputStream);
+
+            dataOutputStream.writeUTF("a");
+            dataOutputStream.writeInt(222);
+            dataOutputStream.writeUTF("b");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                bufferedOutputStream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+}
+```
 
 - 读文件
     - 先打开文件，读入数据，关闭文件
@@ -376,4 +426,35 @@ throws:抛出异常
         read/readBoolean/readInt/readChar/readDouble/readFloat/readUTF/...
     - try-resource语句，自动关闭资源
     - 关闭最外层的数据流，将会把其上所有的数据流关闭
+    
+```java
+public class testBinRead {
+    public static void main(String[] args) {
+        method_2();
+    }
+
+    //try-resource
+    public static void method_2() {
+        try (DataInputStream dataInputStream = new DataInputStream( new BufferedInputStream(new FileInputStream("./temp/def.dat")))) {
+            String a = dataInputStream.readUTF();
+            int b = dataInputStream.readInt();
+            String c = dataInputStream.readUTF();
+            System.out.println(a);
+            System.out.println(b);
+            System.out.println(c);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+}
+
+```
+总结：
+    - 理解节点类，转换类，包装类的联合用法
+    - 读取需要根据写入的规则进行读取，避免错位
+    - 尽量使用try-resource语句，自动关闭资源
+    
+### zip读入输出
+
+[zip](https://www.bilibili.com/video/av89754609?p=46)
         

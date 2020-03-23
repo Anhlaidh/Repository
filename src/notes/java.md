@@ -453,4 +453,8 @@ public class testBinRead {
     - 理解节点类，转换类，包装类的联合用法
     - 读取需要根据写入的规则进行读取，避免错位
     - 尽量使用try-resource语句，自动关闭资源
+    
+### zip读入输出
+
+[zip](https://www.bilibili.com/video/av89754609?p=46)
         

@@ -112,3 +112,140 @@ public class HelloWorld {
     }
 }
 ```
+
+### 高级字符编码
+
+#### 正则表达式
+
+- 学习正则表达式：
+精通正则表达式（第三版） Jefferry E.F.Friedl
+
+- java.util.regex包
+    - Pattern 正则表达式的编译表示
+        - compile编译一个正则表达式喂Pattern对象
+        - matcher用Pattern对象匹配一个字符串，返回匹配结果
+    - Matcher
+        - IndexMethod(位置方法) //start(),start(int group),end(),end(group)
+        - StudyMethod(查找方法) //lookingAt(),find(),find(int start),matches() 
+        - Replacement(替换方法) //replaceAll(String replacement)
+
+Matcher
+```java
+package JavaLearning_Advanced.regex;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+/**
+ * @Description:
+ * @author: Anhlaidh
+ * @date: 2020/3/23 0023 19:21
+ */
+public class MatcherDemo {
+    private static final String REGEX = "\\bdog\\b";//\b表示边界
+    private static final String INPUT = "dog dog dog doggie dogg";
+
+    public static void main(String[] args) {
+        //检查字符串里有多少个dog
+        Pattern pattern = Pattern.compile(REGEX);
+        Matcher matcher = pattern.matcher(INPUT);
+        int count = 0;
+        while (matcher.find()) {
+            count++;
+            System.out.println("Match number" + count);
+            System.out.println("start()" + matcher.start());
+            System.out.println("end()" + matcher.end());
+//        String f = "fooooooooooooo";
+//        matcher.lookingAt();//不完全匹配,匹配foo为true
+//        matcher.find();//完全匹配，匹配foo为false
+        }
+    }
+}
+
+```
+Replace
+```java
+package JavaLearning_Advanced.regex;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+/**
+ * @Description:
+ * @author: Anhlaidh
+ * @date: 2020/3/23 0023 19:39
+ */
+public class ReplaceDemo {
+    public static void Replace_1() {
+        String REGEX = "a*b";//*表示限定前面的a可以有0个或者多个
+        String INPUT = "aavfooabfooabafoobcdd";
+        String REPLACE = "-";
+        Pattern pattern = Pattern.compile(REGEX);
+        Matcher matcher = pattern.matcher(INPUT);
+        StringBuffer stringBuffer = new StringBuffer();
+        // 全部替换
+        while (matcher.find()) {
+            matcher.appendReplacement(stringBuffer, REPLACE);
+        }
+        //最后将尾巴字符串附加上
+        matcher.appendTail(stringBuffer);
+        System.out.println(stringBuffer.toString());
+
+    }
+
+    public static void Replace_2() {
+        String REGEX = "dog";//*表示限定前面的a可以有0个或者多个
+        String INPUT = "The dog says meow.All dogs say meow";
+        String REPLACE = "cat";
+        Pattern pattern = Pattern.compile(REGEX);
+        Matcher matcher = pattern.matcher(INPUT);
+        INPUT = matcher.replaceAll(REPLACE);
+        System.out.println(INPUT);
+
+    }
+}
+
+```
+
+- OJ
+```java
+package JavaLearning_Advanced.regex;
+
+import org.apache.commons.io.Charsets;
+import org.apache.commons.io.IOUtils;
+
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Scanner;
+
+/**
+ * @Description:
+ * @author: Anhlaidh
+ * @date: 2020/3/23 0023 19:55
+ */
+public class String2inputStream {
+    public static void main(String[] args) {
+        //构造字符串列表
+        List<String> names = new LinkedList<>();
+        names.add("xiaohong");
+        names.add("xiaoming");
+        names.add("Daming");
+        names.add("xiaohei");
+        //合并为一个字符串，以逗号相连
+        String nameStr = String.join(",", names);
+        //将字符串作为默认输入流
+        InputStream in = IOUtils.toInputStream(nameStr, Charsets.toCharset("UTF-8"));
+        //重置系统的输入流
+        System.setIn(in);
+        //模拟键盘输入，这也是OJ平台测试用例输入的原理
+        //此处也可以换成一个文件的输入流
+        Scanner scanner = new Scanner(System.in);
+        scanner.useDelimiter(",");
+        while (scanner.hasNext()) {
+            System.out.println(scanner.next());
+        }
+    }
+}
+```

@@ -231,6 +231,8 @@ throws:抛出异常
 - Arrays  
     ![Arrays](.java_images/Arrays.png)  
        - 补充（fill(数组名，开始位数，结束位数，值))  
+    - Arrays.asList(str.split("reg"))  将字符串转化为list
+        - String.join("reg",List) 将list转化为字符串
 - Collections  
     ![](.java_images/021a01f2.png)  
     -对象的比较  

@@ -2,8 +2,6 @@ package JavaLearning_Advanced.Maven;
 
 import org.apache.commons.math3.util.ArithmeticUtils;
 
-import java.util.ArrayList;
-
 /**
  * @Description:
  * @author: Anhlaidh

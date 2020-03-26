@@ -268,4 +268,119 @@ public class String2inputStream {
           |\&quot;|"|双引号|
     - 注释：&lt;!--  内容  -->
 
+### xml解析
+
+未完成
+
+
+## JSON 
+
+- 概念
+    - JavaScript Object Notation ，JS对象表示法
+    - 是一种轻量级的数据交换格式
+    - 类似XML，更小、更快、更易解析
+    - 最早用于JavaScript中，容易解析，最后推广到全语言
+    - 尽管使用JavaScript语法，但是独立于编程语言
+- 用途
+    - JSON生成
+    - JSON解析
+    - JSON校验
+    - 和JavaBean对象进行互解析
+        - 具有一个无参的构造函数
+        - 可以包括多个属性，所有属性都是private
+        - 每个属性都有对应的Getter/Setter方法
+        - JavaBean 用于封装数据，有可称为POJO(Plain Old Java Object)
+
+```java
+package JavaLearning_Advanced.Json;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * @Description:
+ * @author: Anhlaidh
+ * @date: 2020/3/26 0026 21:42
+ */
+public class testJackson {
+    public static void main(String[] args) throws IOException {
+        testJsonObject();
+        System.out.println("分割线=====================================================");
+        testJsonFile();
+
+    }
+
+    private static void testJsonFile() throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        //从json文件中加载，并重构为java对象
+        File json = new File("temp/json/books.json");
+        List<Book> books = objectMapper.readValue(json, new TypeReference<List<Book>>() {
+        });
+        for (Book book : books) {
+            System.out.println(book.getAuthor());
+            System.out.println(book.getTitle());
+        }
+
+    }
+
+    private static void testJsonObject() throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        //构造对象
+        Person person = new Person();
+        person.setName("TOM");
+        person.setAge(20);
+        person.setScores(Arrays.asList(60, 70, 80));
+        //将对象解析为json字符串
+        String jsonStr = objectMapper.writeValueAsString(person);
+        System.out.println(jsonStr);
+        //json字符串重构对象
+        Person p2 = objectMapper.readValue(jsonStr, Person.class);
+        System.out.println(p2.getName());
+        System.out.println(p2.getAge());
+        System.out.println(p2.getScores());
+        //从json字符串重构JsonNode对象
+        JsonNode node = objectMapper.readTree(jsonStr);
+        System.out.println(node.get("name").asText());
+        System.out.println(node.get("age").asText());
+        System.out.println(node.get("scores"));
+
+    }
+}
+```
+```json
+[
+  {
+    "category": "COOKING",
+    "title": "Everyday Italian",
+    "author": "Giada De Laurentiis",
+    "year": "2005",
+    "price": 30
+  },
+  {
+    "category": "CHILDREN",
+    "title": "Harry Potter",
+    "author": "J K Rowling",
+    "year": "2005",
+    "price": 29
+  },
+  {
+    "category": "WEB",
+    "title": "Learning XML",
+    "author": "Erik T.Ray",
+    "year": "2003",
+    "price": 39
+  }
+]
+```
+        
+- 总结
+    - JSON是一种独立于编程语言的、轻量的、数据交换格式
+    - 有多种第三方库辅助我们进行JSON生成和解析
+    - JSON会丢失顺序性
 

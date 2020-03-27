@@ -10,4 +10,5 @@ public interface ISort {
      void MergeSort(int[] array);
      void BubbleSort(int[] array);
      void SelectSort(int[] array);
+     void InsertionSort(int[] array);
 }

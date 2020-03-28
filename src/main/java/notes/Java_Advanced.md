@@ -500,6 +500,179 @@ public class ValidateCode {
 - main函数（线程）可能早于新线程结束，整个程序并不终止
 - 整个程序终止是等所有的线程都终止（包括main函数线程）
 
+##### 规则
+规则一：
+1.调用run方法来启动run方法，将会是串行运行
+2. 调用start方法，来启动run方法，将会是并行运行（多线程运行）
+规则二：
+1. main线程可能早于子线程结束
+2. main线程和子线程都结束了，整个程序才算终止
+规则三：
+1.实现Runnable的对象必须包装在Thread类里面，才可以启
+2. 不能直接对Runnable对象进行start方法
+规则四：
+1. 一个线程对象不能多次start，多次start将报异常
+2. 多个线程对象都start后，哪一个先执行，完全由JVM/操作系统来主导，程序员无法指定
+
+一：
+```java
+package JavaLearning_Advanced.thread.rules;
+
+/**
+ * @Description:
+ *  规则一：
+ *  1.调用run方法来启动run方法，将会是串行运行
+ *  2. 调用start方法，来启动run方法，将会是并行运行（多线程运行）
+ *
+ * @author: Anhlaidh
+ * @date: 2020/3/28 0028 22:59
+ */
+
+public class first {
+    public static void main(String[] args) throws InterruptedException {
+        new TestThread0().run();
+        while (true) {
+            System.out.println("main");
+            Thread.sleep(10);
+        }
+    }
+
+}
+
+class TestThread0 extends Thread{
+    @Override
+    public void run() {
+        while (true) {
+            System.out.println("testThread0");
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
+```
+二：
+```java
+package JavaLearning_Advanced.thread.rules;
+
+/**
+ * @Description:
+ * 规则二：
+ * 1. main线程可能早于子线程结束
+ * 2. main线程和子线程都结束了，整个程序才算终止
+ * @author: Anhlaidh
+ * @date: 2020/3/28 0028 23:06
+ */
+public class second {
+    public static void main(String[] args) throws InterruptedException {
+        new TestThread1().start();
+//        while (true) {
+//            System.out.println("main");
+//            Thread.sleep(10);
+//        }
+    }
+
+}
+
+class TestThread1 extends Thread{
+    @Override
+    public void run() {
+        while (true) {
+            System.out.println("testThread1");
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
+```
+三:
+```java
+package JavaLearning_Advanced.thread.rules;
+
+/**
+ * @Description:
+ * 规则三：
+ * 1.实现Runnable的对象必须包装在Thread类里面，才可以启动
+ * 2. 不能直接对Runnable对象进行start方法
+ * @author: Anhlaidh
+ * @date: 2020/3/28 0028 23:33
+ */
+public class third {
+    public static void main(String[] args) throws InterruptedException {
+//        new TestThread2().start();
+        //runnable对象必须放在一个Thread类中才能运行
+        TestThread2 tt = new TestThread2();
+        Thread thread = new Thread(tt);
+        thread.start();
+        while (true) {
+            System.out.println("main");
+            Thread.sleep(1000);
+//        }
+        }
+
+    }
+}
+
+class TestThread2 implements Runnable {
+    @Override
+    public void run() {
+        while (true) {
+            System.out.println(Thread.currentThread().getName());
+            //输出当前线程名
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+```
+四：
+```java
+package JavaLearning_Advanced.thread.rules;
+
+/**
+ * @Description:
+ * 规则四：
+ * 1. 一个线程对象不能多次start，多次start将报异常
+ * 2. 多个线程对象都start后，哪一个先执行，完全由JVM/操作系统来主导，程序员无法指定
+ * @author: Anhlaidh
+ * @date: 2020/3/28 0028 23:39
+ */
+public class Fourth {
+    public static void main(String[] args) {
+        TestThread4 t1 = new TestThread4();
+        t1.start();
+//        t1.start();
+        TestThread4 t2 = new TestThread4();
+        t2.start();
+    }
+}
+
+class TestThread4 extends Thread {
+    @Override
+    public void run() {
+        while (true) {
+            System.out.println(Thread.currentThread().getName()+"is running");
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
+```
+
 #### 多进程和多线程的对比
 
 - 线程共享数据

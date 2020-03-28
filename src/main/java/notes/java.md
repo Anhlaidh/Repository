@@ -238,7 +238,7 @@ throws:抛出异常
     -对象的比较  
     ![comparable](.java_images/eb55ee78.png)  
     
-## File
+### File
 
 - ![文件概述](.java_images/27479294.png)
 - 文件系统和java是并列的两套系统
@@ -251,10 +251,23 @@ throws:抛出异常
 
 ## javaIO
 
+
+
 ![思维导图](.java_images/a65fcb1f.png)
 
 - java文件处理类都在java.io包中
 - 处理类分成：节点类、包装类（转化类、装饰类）
+
+### File
+
+- ![文件概述](.java_images/27479294.png)
+- 文件系统和java是并列的两套系统
+- File类是文件基本属性操作的主要类
+- java7提出了NIO包在某些功能上有重要的补充作用
+-   ![testPath](.java_images/testPath.png)
+-   ![testFile](.java_images/testFile.png)
+-   ![testFiles1](.java_images/testFiles1.png)
+-   ![testFiles2](.java_images/testFiles2.png)
 
 ### 文件读写
 
@@ -378,7 +391,7 @@ public class testRead {
 
 ### 二进制文件读写
 
-##写入
+####写入
 
 - 写文件
     - 先创建文件，写入数据，关闭文件

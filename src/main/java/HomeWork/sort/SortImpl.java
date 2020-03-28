@@ -138,8 +138,8 @@ public class SortImpl implements ISort {
     @Override
     public void InsertionSort(int[] array) {
         List<Integer> sorted = new LinkedList<>();
-        List<Integer> ints = Arrays.asList(array)
-        insert()
+//        List<Integer> ints = Arrays.asList(array)
+//        insert()
     }
 
     private void insert(int[] array) {

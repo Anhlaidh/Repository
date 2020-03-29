@@ -813,3 +813,317 @@ public class UdpSend {
 }
 
 ```
+
+### TCP
+
+- TCP协议：有链接、保证可靠的无误差通讯
+    1. 服务器：创建一个ServerSocket，等待连接
+    2. 客户机：创建一个Socket，连接到服务器
+    3. 服务器：ServerSocket接收到连接，创建一个Socket和客户的Socket建立专线连接，后续服务器和客户机的对话
+    （这一对Socket）会在一个单独的线程（服务器端）上运行
+    4. 服务器的ServerSocket继续等待连接，返回 i.
+- 软件服务器有两要求：
+    1. 它能够实现一定的功能
+    2. 它必须在一个公开地址上对外提供服务
+    
+- ServerSocket：服务码头
+    - 需要绑定Port
+    - 如果有多块网卡，需要绑定一个IP地址
+- Socket：运输通道
+    - 客户端需要绑定服务器的地址和Port
+    - 客户端往Socket输入流写入数据，送到服务端
+    - 客户端从Socket输出流取服务端过来的数据
+    - 服务器反之亦然
+
+- 过程：
+    - 服务端等待响应时，处于阻塞状态
+    - 服务端可以同时响应多个客户端
+    - 服务端每接受一个客户端，就启动一个独立的线程与其对应
+    - 客户端或者服务端都可以选择关闭这条Socket通道
+    - 实例
+        - 服务端先启动，且一直保留
+        - 客户端后启动，可以先退出
+        
+Server:
+```java
+package JavaLearning_Advanced.TCP;
+
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+/**
+ * @Description:
+ * @author: Anhlaidh
+ * @date: 2020/3/29 0029 13:16
+ */
+public class TCPServer2 {
+    public static void main(String[] args) {
+        try {
+            ServerSocket serverSocket = new ServerSocket(8001);
+            while (true) {
+                Socket socket = serverSocket.accept();
+                System.out.println("来了一个client");
+                new Thread(new Worker(socket)).start();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static class Worker implements Runnable{
+        private Socket socket;
+        public Worker(Socket socket) {
+            this.socket = socket;
+        }
+
+        @Override
+        public void run() {
+            try {
+                System.out.println("服务人员已启动");
+                InputStream inputStream = socket.getInputStream();
+                OutputStream outputStream = socket.getOutputStream();
+                DataOutputStream dos = new DataOutputStream(outputStream);
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                while (true) {
+                    String strWord = bufferedReader.readLine();
+                    System.out.println("client said:" + strWord + ":" + strWord.length());
+                    if (strWord.equalsIgnoreCase("quit")) {
+                        break;
+                    }
+                    String strEcho = strWord + "666";
+                    System.out.println("server said:" + strWord + "--------->" + strEcho);
+                    dos.writeBytes(strWord + "--------->" +strEcho+ System.getProperty("line.separator"));
+                }
+                bufferedReader.close();
+                dos.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
+```
+
+Client:
+```java
+package JavaLearning_Advanced.TCP;
+
+import java.io.*;
+import java.net.InetAddress;
+import java.net.Socket;
+
+/**
+ * @Description:
+ * @author: Anhlaidh
+ * @date: 2020/3/29 0029 11:47
+ */
+public class TcpClient {
+    public static void main(String[] args) {
+        try {
+            Socket socket = new Socket(InetAddress.getByName("127.0.0.1"), 8001);
+            // 同一个通道，服务端输出流就是客户端的输入流，服务端的输入流，就是客户端的输出流
+            InputStream inputStream = socket.getInputStream();//开启通道的输入流
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            OutputStream outputStream = socket.getOutputStream();//开启通道的输出流
+            DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
+            BufferedReader brKey = new BufferedReader(new InputStreamReader(System.in));
+            while (true) {
+                String strWord = brKey.readLine();
+                if (strWord.equalsIgnoreCase("quit")) {
+                    break;
+                } else {
+                    System.out.println("i want to sent "+strWord);
+//                    outputStream.write(strWord.getBytes(), 0, strWord.length());//可以这么写
+                    dataOutputStream.writeBytes(strWord+System.getProperty("line.separator"));
+                    System.out.println("server said"+bufferedReader.readLine());
+
+                }
+            }
+            dataOutputStream.close();
+            bufferedReader.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+```
+### HTTP
+
+- 在浏览器输入URL地址
+- 浏览器将连接到远程服务器（IP=Port(80)）
+- 请求下载一个HTML文件下来，放到本地临时文件夹中
+- 在浏览器显示出来
+ 
+#### 实例
+
+- URLConnection
+    - 获取资源的连接器
+    - 根据URL的openConnection()方法获得URLConnection
+    - connect方法，建立和资源的联系通道
+    - getInputStream方法，获取资源的内容
+    
+get:
+```java
+package JavaLearning_Advanced.HTTP;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @Description:
+ * @author: Anhlaidh
+ * @date: 2020/3/29 0029 14:14
+ */
+public class URLConnectionGet {
+    public static void main(String[] args) {
+        try {
+            String urlName = "http://www.baidu.com";
+            URL url = new URL(urlName);
+            URLConnection connection = url.openConnection();
+            connection.connect();
+            //打印Http的头部信息
+            Map<String, List<String>> headers = connection.getHeaderFields();
+            for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
+                String key = entry.getKey();
+                for (String value : entry.getValue()) {
+                    System.out.println(key + ":" + value);
+                }
+            }
+            //输出将要收到的内容属性信息
+            System.out.println("-------------------");
+            System.out.println("getContentType" + connection.getContentType());
+            System.out.println("getContentLength" + connection.getContentLength());
+            System.out.println("getContentEncoding" + connection.getContentEncoding());
+            System.out.println("getDate" + connection.getDate());
+            System.out.println("getExpiration" + connection.getExpiration());
+            System.out.println("getLastModified" + connection.getLastModified());
+            System.out.println("-------------------");
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream(),"UTF-8"));
+            //输出收到的内容
+            String line = "";
+            while ((line = bufferedReader.readLine()) != null) {
+                System.out.println(line);
+            }
+            bufferedReader.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+```
+Post:
+```java
+package JavaLearning_Advanced.HTTP;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.net.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+/**
+ * @Description:
+ * @author: Anhlaidh
+ * @date: 2020/3/29 0029 14:42
+ */
+public class URLConnectionPost {
+    public static void main(String[] args) throws IOException {
+        String url = "https://www.usps.com/go/ZipLookupAction.action";
+        Object userAgent = "Httpie/0.9.2";
+        Object redirects = "1";
+        CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("tAddress", "1 Market Street");
+        params.put("tCity", "San Francisco");
+        params.put("sState", "CA");
+        String result = doPost(new URL(url), params,
+                userAgent == null ? null : userAgent.toString(),
+                redirects == null ? -1 : Integer.parseInt(redirects.toString()));
+        System.out.println(result);
+    }
+
+    private static String doPost(URL url, Map<String, String> nameValueParis, String userAgent, int redirects) throws IOException {
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        if (userAgent != null) {
+            connection.setRequestProperty("User-Agent", userAgent);
+        }
+        if (redirects >= 0) {
+            connection.setInstanceFollowRedirects(false);
+            connection.setDoOutput(true);
+        }
+        //输出请求的参数
+        try (PrintWriter out = new PrintWriter(connection.getOutputStream())) {
+            boolean first = true;
+            for (Map.Entry<String, String> pair : nameValueParis.entrySet()) {
+                //参数必须这样拼接a=1&b=2&c=3
+                if (first) {
+                    first = false;
+                } else {
+                    out.println('&');
+                }
+                String name = pair.getKey();
+                String value = pair.getValue();
+                out.print(name);
+                out.print('=');
+                out.print(URLEncoder.encode(value, "UTF-8"));
+            }
+            String encoding = connection.getContentEncoding();
+            if (encoding == null) {
+                encoding = "UTF-8";
+            }
+            if (redirects > 0) {
+                int responseCode = connection.getResponseCode();
+                System.out.println("responseCode:" + responseCode);
+                if (responseCode == HttpURLConnection.HTTP_MOVED_PERM || responseCode == HttpURLConnection.HTTP_MOVED_TEMP ||
+                        responseCode == HttpURLConnection.HTTP_SEE_OTHER) {
+                    String location = connection.getHeaderField("Location");
+                    if (location != null) {
+                        URL base = connection.getURL();
+                        connection.disconnect();
+                        return doPost(new URL(base, location), nameValueParis, userAgent, redirects - 1);
+                    }
+                }
+            } else if (redirects == 0) {
+                throw new IOException("too many redirects");
+            }
+            //获取html内容
+            StringBuilder response = new StringBuilder();
+            try (Scanner in = new Scanner(connection.getInputStream(), encoding)) {
+                while (in.hasNextLine()) {
+                    response.append(in.nextLine());
+                    response.append("\n");
+                }
+            } catch (IOException e) {
+                InputStream err = connection.getErrorStream();
+                if (err == null) {
+                    throw e;
+                }
+                try (Scanner in = new Scanner(err)) {
+                    response.append(in.nextLine());
+                    response.append("\n");
+                }
+            }
+            return response.toString();
+        }
+
+
+    }
+}
+
+```

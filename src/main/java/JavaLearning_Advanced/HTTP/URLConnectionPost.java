@@ -17,7 +17,7 @@ import java.util.Scanner;
  */
 public class URLConnectionPost {
     public static void main(String[] args) throws IOException {
-        String url = "https://www.usps.com/go/ZipLookupAction.action";
+        String url = "https://zh-tools.usps.com/zip-code-lookup.htm?byaddress";
         Object userAgent = "Httpie/0.9.2";
         Object redirects = "1";
         CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));

@@ -1127,3 +1127,211 @@ public class URLConnectionPost {
 }
 
 ```
+### JDK HttpClient (JDK9新增，JDK10更新，JDK11正式发布)
+
+- java.net.http包
+- 取代URLConnection
+- 支持HTTP/1.1和HTTP/2
+- 实现大部分HTTP方法
+- 主要类
+    - HttpClient
+    - HttpRequest
+    - HttpResponse
+
+Get:
+```java
+package JavaLearning_Advanced.HTTP.HttpClient;
+
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+
+/**
+ * @Description:
+ * @author: Anhlaidh
+ * @date: 2020/3/29 0029 15:38
+ */
+public class JDKHttpClientGet {
+    public static void main(String[] args) {
+        doGet();
+    }
+
+    private static void doGet() {
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder(URI.create("http://www.baidu.com")).build();
+            HttpResponse response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println(response.body());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+```
+Post:
+```java
+package JavaLearning_Advanced.HTTP.HttpClient;
+
+import java.net.URI;
+import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+
+/**
+ * @Description:
+ * @author: Anhlaidh
+ * @date: 2020/3/29 0029 15:43
+ */
+public class JDKHttpClientPost {
+    public static void main(String[] args) {
+        doPost();
+    }
+
+    private static void doPost() {
+        try {
+            HttpClient client = HttpClient.newBuilder().build();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("https://zh-tools.usps.com/zip-code-lookup.htm?byaddress"))
+                    .header("User-Agent", "HTTPie/0.9.2")
+                    .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
+                    .POST(HttpRequest.BodyPublishers.ofString(
+                            "tAdress=" + URLEncoder.encode("1 Market Street", "UTF-8") +
+                                    "tCity="+ URLEncoder.encode("San Francisco", "UTF-8") +
+                                    "sState="+ "CA")
+                    ).build();
+            HttpResponse response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println(response.statusCode());
+            System.out.println(response.headers());
+            System.out.println(response.body().toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+```
+    
+### HttpComponent
+
+Get:
+```java
+package JavaLearning_Advanced.HTTP.HttpComponet;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+
+/**
+ * @Description:
+ * @author: Anhlaidh
+ * @date: 2020/3/29 0029 16:53
+ */
+public class HttpComponentsGet {
+    public static void main(String[] args) {
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectionRequestTimeout(5000)//设置超时时间
+                .setConnectionRequestTimeout(5000)//设置请求超时时间
+                .setSocketTimeout(5000)
+                .setRedirectsEnabled(true)//默认允许自动重定向
+                .build();
+        HttpGet httpGet = new HttpGet("http://www.baidu.com");
+        httpGet.setConfig(requestConfig);
+        String strResult = "";
+        try {
+            HttpResponse httpResponse = httpClient.execute(httpGet);
+            if (httpResponse.getStatusLine().getStatusCode() == 200) {
+                strResult = EntityUtils.toString(httpResponse.getEntity(),"UTF-8");//获得返回结果
+                System.out.println(strResult);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+```
+Post;
+```java
+package JavaLearning_Advanced.HTTP.HttpComponet;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.LaxRedirectStrategy;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @Description:
+ * @author: Anhlaidh
+ * @date: 2020/3/29 0029 17:03
+ */
+public class HttpComponentsPost {
+    public static void main(String[] args) throws UnsupportedEncodingException {
+        //获取可关闭的httpClient
+        //CloseableHttpClient
+        CloseableHttpClient httpClient = HttpClientBuilder.create().setRedirectStrategy(new LaxRedirectStrategy()).build();
+        //配置超时时间
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setSocketTimeout(10000)
+                .setConnectTimeout(10000)
+                .setConnectionRequestTimeout(10000)
+                .setRedirectsEnabled(false).build();
+        HttpPost httpPost = new HttpPost("https://zh-tools.usps.com/zip-code-lookup.htm?byaddress");
+        //配置post参数
+        List<BasicNameValuePair> list = new ArrayList<>();
+        list.add(new BasicNameValuePair("tAdress", URLEncoder.encode("1 Market Street", "UTF-8")));//请求参数
+        list.add(new BasicNameValuePair("tCity", URLEncoder.encode("San Francisco", "UTF-8")));//请求参数
+        list.add(new BasicNameValuePair("sState", "CA"));//请求参数
+        try {
+            UrlEncodedFormEntity entity = new UrlEncodedFormEntity(list, "UTF-8");
+            // 设置post请求参数
+            httpPost.setEntity(entity);
+            httpPost.setHeader("User-Agent", "HTTPie/0.9.2");
+            HttpResponse httpResponse = httpClient.execute(httpPost);
+            String result = "";
+            if (httpResponse != null) {
+                int statusCode = httpResponse.getStatusLine().getStatusCode();
+                System.out.println(statusCode);
+                if (statusCode == 200) {
+                    result = EntityUtils.toString(httpResponse.getEntity());
+                } else {
+                    result = "ERROR Response" + httpResponse.getStatusLine().toString();
+                }
+            } else {
+            }
+            System.out.println(result);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                if (httpClient != null) {
+                    httpClient.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+
+    }
+}
+
+```

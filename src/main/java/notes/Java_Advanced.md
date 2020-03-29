@@ -500,6 +500,16 @@ public class ValidateCode {
 - main函数（线程）可能早于新线程结束，整个程序并不终止
 - 整个程序终止是等所有的线程都终止（包括main函数线程）
 
+
+####多线程实现的对比
+
+- Thread占据了父类名额，不如Runnable方便
+- Thread类实现Runnable
+- Runnable启动时需要Thread类的支持
+- Runnable更容易实现多线程中资源共享
+
+结论：建议实现Runnable接口来完成多线程
+
 ##### 规则
 规则一：
 1.调用run方法来启动run方法，将会是串行运行
@@ -680,3 +690,126 @@ class TestThread4 extends Thread {
 - 线程更轻量级，更容易切换
 - 多个线程更容易管理
 
+
+## Java网络编程
+
+### 网络基础知识
+
+- 网络是当前信息技术的第一推动力
+- 每个计算设备上都有若干个网卡
+- 每个网卡上有（全球唯一）单独的硬件地址，MAC地址
+
+- ip地址
+    - IPV4 192.169.0.1每段0-255
+    - IPV6 128bit长，8段，每段4个16进制数
+    - ipconfig ifconfig
+
+- port:端口 0~65535
+    - 0~1023OS已经占用了，80是web，23是telnet
+    - 1024~65535，一般程序可使用（谨防冲突）
+- 两台机器通讯就是在IP+port上进行的
+    - netstat -an
+    
+- 保留ip：127.0.0.1 本机
+- 公网（万维网/互联网）和内网（局域网）
+    - 网络上分层的
+    - 最外层的是外网/互联网
+    - 底下每层都是内网
+    - ip地址可以在每个层次的网重用
+    - tracert 看当前及其和目标机器的访问中继
+- 通讯协议TCP UDP
+    - TCP(Transmission Control Protocol)
+        - 传输控制协议，面向连接的协议
+        - 两台机器的可靠无差错的数据传输
+        - 双向字节流传递
+    - UDP(User Datagram Protocol)   -->QQ(多次UDP模仿TCP)
+    - 用户数据报协议，面向无连接协议
+    - 不保证可靠的数据传输
+    - 速度快，也可以在较差的网络下使用
+    
+### UDP
+
+- 计算机通讯：数据从一个IP的port出发（发送方），运输到另外一个IP的port（接收方）
+- UDP：无连接无状态的通讯协议
+    - 发送方发送消息，如果接收方刚好在目的地，则可以接受，如果不在
+    那这个消息就丢失了
+    - 发送方也无法得知是否发送成功
+    - UDP的好处就是简单节省，经济
+
+#### 实例
+
+-  DatagramSocket:通讯的数据管道
+    - send和receive方法
+    - （可选，多网卡）绑定一个IP和Port
+- DatagramPacket
+    - 集装箱：封装数据
+    - 地址标签：目的地IP+Port
+Receive:
+```java
+package JavaLearning_Advanced.UDP;
+
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.SocketException;
+
+/**
+ * @Description: receive
+ * @author: Anhlaidh
+ * @date: 2020/3/29 0029 0:23
+ */
+public class UdpRecv {
+    public static void main(String[] args) throws Exception {
+        DatagramSocket socket = new DatagramSocket(3000);
+        byte[] buf = new byte[1024];
+        DatagramPacket packet = new DatagramPacket(buf,buf.length);
+        System.out.println("UdpRecv：等待信息");
+        socket.receive(packet);
+        System.out.println("UdpRecv:已接受信息");
+        String strRecv = new String(packet.getData(), 0, packet.getLength()) + "from" + packet.getAddress().getHostAddress()
+                + ":" + packet.getPort();
+        System.out.println(strRecv);
+        String str = "nice to meet you!!";
+        DatagramPacket packet1 = new DatagramPacket(str.getBytes(), str.length(), packet.getAddress(), packet.getPort());
+        System.out.println("UdpRecv:即将发送信息！");
+        socket.send(packet1);
+        System.out.println("UdpRecv:已发送");
+
+    }
+}
+
+```
+
+send:
+```java
+package JavaLearning_Advanced.UDP;
+
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+
+/**
+ * @Description: send
+ * @author: Anhlaidh
+ * @date: 2020/3/29 0029 0:24
+ */
+public class UdpSend {
+    public static void main(String[] args) throws Exception{
+        DatagramSocket socket = new DatagramSocket();
+        String str = "hi ,im a mini robot";
+        DatagramPacket packet = new DatagramPacket(str.getBytes(), str.length(), InetAddress.getByName("127.0.0.1"), 3000);
+        System.out.println("UdpSend:我要发送信息了");
+        socket.send(packet);
+        System.out.println("UdpSend: 发送完毕");
+        Thread.sleep(1000);
+        byte[] buf = new byte[1024];
+        DatagramPacket packet1 = new DatagramPacket(buf, 1024);
+        System.out.println("UdpSend：我在等待信息");
+        socket.receive(packet1);
+        System.out.println("UdpSend：已收到信息");
+        String str2 = new String(packet1.getData(), 0, packet1.getLength())+"from"+packet1.getAddress().getHostAddress()
+                +":"+packet1.getPort();
+        System.out.println(str2);
+    }
+}
+
+```

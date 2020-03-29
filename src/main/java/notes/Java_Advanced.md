@@ -691,6 +691,150 @@ class TestThread4 extends Thread {
 - 多个线程更容易管理
 
 
+### 多线程信息共享
+
+- 线程类
+    - 通过继承Thread或实现Runnable
+    - 通过start方法，调用run方法，run方法工作
+    - 线程run结束后，线程退出
+- 粗粒度：子线程与子线程之间、和main线程之间缺乏交流
+- 细粒度：线程之间有信息交流通讯
+    - 通过共享变量达到信息共享
+    - Jdk原生库不支持发送消息
+- 通过共享变量在多个线程中共享消息
+    - static变量
+    - 同一个Runnable类的成员变量
+
+test1:继承thread，static修饰的变量可以共享，但是会造成数据重复
+```java
+package JavaLearning_Advanced.thread.message;
+
+/**
+ * @Description:
+ * @author: Anhlaidh
+ * @date: 2020/3/29 0029 20:23
+ */
+public class ThreadDemo0 {
+    public static void main(String[] args) {
+        new TestThread0().start();
+        new TestThread0().start();
+        new TestThread0().start();
+        new TestThread0().start();
+    }
+
+    private static class TestThread0 extends Thread {
+//        private int tickets = 100; 每个线程卖100张，没有共享
+        private static int tickets = 100;  //static变量是共享的，所有的线程共享
+        @Override
+        public void run() {
+            while (tickets>0) {
+                System.out.println(Thread.currentThread().getName() + " is selling tickets" + tickets);
+                tickets = tickets - 1;
+
+            }
+        }
+    }
+}
+
+```
+- 多线程信息共享问题
+    - 工作缓存副本
+    - 关键步骤缺乏加锁限制
+- i++，并非原子性操作
+    - 读取主存i（正本）到工作缓存（副本）中
+    - 每个CPU执行（副本）i+1操作
+    - CPU将结果写入到缓存（副本）中
+    - 数据从工作缓存（副本）刷到主存（正本）中
+- 变量副本问题的解决办法
+    - 采用volatile关键字修饰变量
+    - 保证不同线程对共享变量操作时的可见性
+
+```java
+package JavaLearning_Advanced.thread.message;
+
+/**
+ * @Description:
+ * @author: Anhlaidh
+ * @date: 2020/3/29 0029 20:55
+ */
+public class ThreadDemo2 {
+    public static void main(String[] args) throws InterruptedException {
+        TestTread3 testTread3 = new TestTread3();
+        testTread3.start();
+
+        Thread.sleep(1000);
+        testTread3.flag = false;
+        System.out.println("main thread is exiting");
+
+    }
+
+    private static class TestTread3 extends Thread {
+        //        boolean flag = true;//子线程不会停止
+        volatile boolean flag = true;//用volatile修饰的变量可以及时在各线程里面通知
+        @Override
+        public void run() {
+            int i = 0;
+            while (flag) {
+                i++;
+            }
+            System.out.println("test thread is exiting");
+
+        }
+    }
+}
+
+```
+
+- 关键步骤加锁限制
+    - 互斥：某一个线程运行一个代码段（关键区），其他线程不能同时运行这个代码段
+    - 同步：多个线程的运行，必须按照某一种规定的先后顺序来运行
+    - 互斥是同步的一种特例
+- 互斥的关键字是synchronized
+    - synchronized代码块/函数，只能一个线程进入
+    - synchronized能加大性能负担，但是使用简便
+
+```java
+package JavaLearning_Advanced.thread.message;
+
+/**
+ * @Description:
+ * @author: Anhlaidh
+ * @date: 2020/3/29 0029 21:16
+ */
+public class ThreadDemo3 {
+    public static void main(String[] args) {
+        TestThread3 testThread3 = new TestThread3();
+        new Thread(testThread3).start();
+        new Thread(testThread3).start();
+        new Thread(testThread3).start();
+        new Thread(testThread3).start();
+
+    }
+
+    private static class TestThread3 implements Runnable {
+        private volatile int tickets = 100;
+
+        @Override
+        public void run() {
+            while (tickets>0) {
+                sale();
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+        }
+
+        private synchronized void sale() {
+            System.out.println(Thread.currentThread().getName() + " sale " + tickets--);
+        }
+    }
+}
+
+```
 ## Java网络编程
 
 ### 网络基础知识

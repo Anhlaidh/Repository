@@ -835,6 +835,25 @@ public class ThreadDemo3 {
 }
 
 ```
+
+### 多线程管理
+
+- 线程状态
+    - NEW 刚创建（new）
+    - RUNNABLE就绪态（start）
+    - RUNNING运行中（run）
+    - BLOCK阻塞（sleep）
+    - TERMINATED 结束
+- Thread的部分API已经废弃
+    - 暂停和恢复：suspend/resume
+    - 消亡：stop/destroy
+- 线程阻塞/和唤醒
+    - sleep，时间一到，自己就会醒来
+    - wait/notify/notifyAll，等待，需要别人来唤醒
+    - join，等待另一个线程结束
+    - interrupt，向另外一个线程发送中断信号，该线程收到信号，会触发
+    Interrupted Exception（可接触阻塞），并进入下一步处理
+- 线程类
 ## Java网络编程
 
 ### 网络基础知识

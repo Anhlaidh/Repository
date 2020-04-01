@@ -137,12 +137,30 @@ public class SortImpl implements ISort {
 
     @Override
     public void InsertionSort(int[] array) {
-        List<Integer> sorted = new LinkedList<>();
-//        List<Integer> ints = Arrays.asList(array)
-//        insert()
-    }
+        int index = 0;//当前排好序的尾节点
 
-    private void insert(int[] array) {
 
+        while (index < array.length) {
+            int minIndex = index; // 遍历列表最小值坐标
+            for (int i = index; i < array.length; i++) {
+                minIndex = array[i] < array[minIndex] ? i : minIndex;
+                //找到最小值并记录坐标
+
+            }
+            {
+                int temp = array[minIndex];
+                array[minIndex] = array[index];
+                array[index] = temp;
+            }
+            //交换位置
+            for (int i = index-1; i >= 0; i--) {
+                if (array[i] >= array[i + 1]) {
+                    int temp = array[i];
+                    array[i] = array[i + 1];
+                    array[i + 1] = temp;
+                }
+            }
+            index++;
+        }
     }
 }

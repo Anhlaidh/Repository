@@ -24,16 +24,15 @@ public class MinN {
         int mid = arr[0]; //定义中值
         int left = 0;//左指针
         int right = arr.length - 1;// 右指针
-        while (true) {
-            if (left==right) break;
-            while (left != right) {
-                if (arr[right]<mid) {
+        while (left != right) {
+            while (left != right) {//左数组
+                if (arr[right] < mid) {
                     arr[left] = arr[right];
                     left++;
                     break;
                 } else right--;
             }
-            while (left != right) {
+            while (left != right) {//右数组
                 if (arr[left] > mid) {
                     arr[right] = arr[left];
                     right--;
@@ -41,8 +40,8 @@ public class MinN {
                 } else left++;
             }
         }
-        arr[left] = mid;
-        if (left==n-1) return arr[left];
+        arr[left] = mid;//中值赋值
+        if (left==n-1) return arr[left];//跳出递归
         if (left > n) {
             return min(Arrays.copyOfRange(arr, 0, left), n);
         } else return min(Arrays.copyOfRange(arr, right+1, arr.length), n - left-1);

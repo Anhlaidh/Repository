@@ -1,13 +1,24 @@
 package JavaLearning_Advanced.BinarySearchTree;
 
+import java.util.Comparator;
+
 /**
  * @Description:
  * @author: Anhlaidh
  * @date: 2020/4/3 0003 21:19
  */
-public class BinarySearchTree<E extends Comparable> implements IBinarySearchTree<E>{
+public class BinarySearchTree<E> implements IBinarySearchTree<E>{
     public int size;
     private Node<E> root;
+    Comparator<E> comparator;
+
+    public BinarySearchTree(Comparator<E> comparator) {
+        this.comparator = comparator;
+    }
+
+    public BinarySearchTree() {
+        comparator = null;
+    }
 
     @Override
     public int size() {
@@ -36,7 +47,7 @@ public class BinarySearchTree<E extends Comparable> implements IBinarySearchTree
     @Override
     public void add(E element) {
         if (root == null) {//添加第一个节点
-            root = new Node(element, null);
+            root = new Node<>(element, null);
             size++;
             return;
         }
@@ -47,8 +58,23 @@ public class BinarySearchTree<E extends Comparable> implements IBinarySearchTree
         int cmp = 0;
         while (node != null) {
             cmp = compare(element, node.element);
-
+            parent = node;
+            if (cmp > 0) {
+                node = node.right;
+            } else if (cmp < 0) {
+                node = node.left;
+            } else {
+                return;//两个数字相同时
+            }
         }
+        //看看插入到父节点的哪个位置
+        Node<E> newNode = new Node<>(element, parent);
+        if (cmp > 0) {
+            parent.right = newNode;
+        } else {
+            parent.left = newNode;
+        }
+        size++;
 
     }
 
@@ -63,7 +89,10 @@ public class BinarySearchTree<E extends Comparable> implements IBinarySearchTree
     }
 
     private int compare(E e1, E e2) {
-        return e1.compareTo(e2);
+        if (comparator != null) {
+           return comparator.compare(e1, e2);
+        }
+        return ((Comparable<E>) e1).compareTo(e2);
     }
 
 

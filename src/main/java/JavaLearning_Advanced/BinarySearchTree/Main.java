@@ -1,6 +1,9 @@
 package JavaLearning_Advanced.BinarySearchTree;
 
+import JavaLearning_Advanced.BinarySearchTree.Util.TreePrinter;
+
 import java.util.Comparator;
+import java.util.Random;
 
 /**
  * @Description:
@@ -9,9 +12,10 @@ import java.util.Comparator;
  */
 public class Main {
     public static void main(String[] args) {
-
+        Random random = new Random();
 //        Integer[] arr = new Integer[]{4, 5, 3, 6, 2, 5, 1};
-        Integer[] arr = new Integer[]{7, 4, 9, 2, 5, 8, 11, 1, 3, 10, 12};
+        Integer[] arr = new Integer[]{7, 4, 9, 2, 5};
+//        Integer[] arr = new Integer[]{7, 4, 9, 2, 5, 8, 11, 1, 3, 10, 12};
         BinarySearchTree<Integer> bst = new BinarySearchTree<>();
         BinarySearchTree<Integer> bst1 = new BinarySearchTree<>(new Comparator<Integer>() {
             @Override
@@ -23,14 +27,8 @@ public class Main {
             bst.add(integer);
 
         }
-        BinarySearchTree.BTreePrinter.printNode(bst.getRoot());
-
-       bst.inOrderTraversal(new BinarySearchTree.Visitor<Integer>() {
-           @Override
-           public void visit(Integer element) {
-               System.out.println(element);
-           }
-       });
+        TreePrinter.print(bst.getRoot());
+        System.out.println(bst.isComplete());
 
 
         System.out.println("height:" + bst.height());

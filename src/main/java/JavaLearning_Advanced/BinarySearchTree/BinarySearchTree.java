@@ -1,5 +1,7 @@
 package JavaLearning_Advanced.BinarySearchTree;
 
+import JavaLearning_Advanced.BinarySearchTree.Util.TreePrinter;
+
 import java.util.*;
 
 /**
@@ -142,10 +144,10 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
     @Override
     public void levelOrderTraversal(Visitor visitor) {
         if (root==null) return;
-        Queue queue = new LinkedList();
+        Queue<Node<E>> queue = new LinkedList<>();
         queue.offer(root);
         while (!queue.isEmpty()) {
-            Node<E> node = (Node<E>) queue.poll();
+            Node<E> node = queue.poll();
            visitor.visit(node.element);
             if (node.left != null) {
                 queue.offer(node.left);
@@ -186,7 +188,7 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
         return ((Comparable<E>) e1).compareTo(e2);
     }
 
-    private static class Node<E> {
+    private static class Node<E> implements TreePrinter.PrintableNode {
         E element;
         Node<E> left;
         Node<E> right;
@@ -202,10 +204,57 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
             if (parent==null) return element+"";
             return element + "_P(" + parent.element + ")";
         }
+
+        public boolean isLeaf() {
+            return left == null && right == null;
+        }
+
+        public boolean hasTwoChildren() {
+            return left != null && right != null;
+        }
+
+        @Override
+        public TreePrinter.PrintableNode getLeft() {
+            return left;
+        }
+
+        @Override
+        public TreePrinter.PrintableNode getRight() {
+            return right;
+        }
+
+        @Override
+        public String getText() {
+            return element.toString();
+        }
     }
 
 
+    @Override
+    public boolean isComplete() {
+      if (root==null) return false;
+        Queue<Node<E>> queue = new LinkedList<>();
+        queue.add(root);
+        boolean leaf = false;
+        while (!queue.isEmpty()) {
+            Node<E> node = queue.poll();
+            if (leaf && !node.isLeaf()) {
+                return false;
+            }
+            if (node.left != null) {
+                queue.offer(node.left);
+            } else if (node.right != null) {
+                return false;
+            }
+            if (node.right != null) {
+                queue.offer(node.right);
+            } else {
+                leaf = true;
+            }
 
+        }
+        return true;
+    }
 
     //打印器
      static class BTreePrinter {

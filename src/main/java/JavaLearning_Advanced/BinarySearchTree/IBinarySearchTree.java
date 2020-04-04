@@ -24,6 +24,8 @@ public interface IBinarySearchTree<E> {
 
     int height();//获得高度
 
+    boolean isComplete();// 判断是否为完全二叉树
+
 
 
 }

@@ -14,8 +14,8 @@ public class Main {
     public static void main(String[] args) {
         Random random = new Random();
 //        Integer[] arr = new Integer[]{4, 5, 3, 6, 2, 5, 1};
-        Integer[] arr = new Integer[]{7, 4, 9, 2, 5};
-//        Integer[] arr = new Integer[]{7, 4, 9, 2, 5, 8, 11, 1, 3, 10, 12};
+//        Integer[] arr = new Integer[]{7, 4, 9, 2, 5};
+        Integer[] arr = new Integer[]{7, 4, 9, 2, 5, 8, 11, 1, 3, 10, 12};
         BinarySearchTree<Integer> bst = new BinarySearchTree<>();
         BinarySearchTree<Integer> bst1 = new BinarySearchTree<>(new Comparator<Integer>() {
             @Override
@@ -32,6 +32,7 @@ public class Main {
 
 
         System.out.println("height:" + bst.height());
-
+        bst.remove(4);
+        TreePrinter.print(bst.getRoot());
     }
 }

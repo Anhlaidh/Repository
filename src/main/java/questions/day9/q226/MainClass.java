@@ -49,6 +49,10 @@ class Solution {
     }
 }
 
+//   ___|___
+//  |       |
+//
+
 public class MainClass {
     public static TreeNode stringToTreeNode(String input) {
         input = input.trim();

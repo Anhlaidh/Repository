@@ -83,7 +83,64 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
 
     @Override
     public void remove(E element) {
+        remove(node(element));
 
+    }
+
+    private void remove(Node<E> node) {
+        if (node==null) return;
+        size--;
+        //度为2的节点
+        if (node.hasTwoChildren()) {
+         //找到后继节点
+            Node<E> p = successor(node);
+            //用后继节点覆盖度为2的节点的值
+            node.element = p.element;
+            //删除后继节点
+            node = p;//TODO 我认为不是很妥
+
+        }
+        //删除node节点(node的度必然是0或1)
+        Node<E> replacement = node.left != null ? node.left : node.right;
+        //node是度为1 的节点
+        if (replacement != null) {
+            //更改parent
+            replacement.parent = node.parent;
+            //更改parent的left、right指向
+            if (node.parent != null) {
+                root = replacement;
+            } else if (node == node.parent.left) {
+                node.parent.left = replacement;
+            } else {// node = node.parent.right
+                node.parent.right = replacement;
+            }
+        } else if (node.parent == null) {//node是叶子节点并且是根节点
+            root = null;
+        } else {//node是叶子节点，但不是根节点
+            if (node == node.parent.left) {
+                node.parent.left = null;
+            } else {
+                node.parent.right = null;
+            }
+
+        }
+
+    }
+
+    private Node<E> node(E element) {
+        Node<E> p = root;
+
+        while (p != null) {
+            int cmp = compare(element, p.element);
+            if (cmp < 0) {
+                p = p.left;
+            }
+            if (cmp==0) return p;
+            if (cmp > 0) {
+                p = p.right;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -227,6 +284,7 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
         public String getText() {
             return element.toString();
         }
+
     }
 
 
@@ -256,91 +314,37 @@ public class BinarySearchTree<E> implements IBinarySearchTree<E> {
         return true;
     }
 
-    //打印器
-     static class BTreePrinter {
-
-        public static <T extends Comparable<?>> void printNode(Node<T> root) {
-            int maxLevel = BTreePrinter.maxLevel(root);
-
-            printNodeInternal(Collections.singletonList(root), 1, maxLevel);
-        }
-
-        private static <T extends Comparable<?>> void printNodeInternal(List<Node<T>> nodes, int level, int maxLevel) {
-            if (nodes.isEmpty() || BTreePrinter.isAllElementsNull(nodes))
-                return;
-
-            int floor = maxLevel - level;
-            int endgeLines = (int) Math.pow(2, (Math.max(floor - 1, 0)));
-            int firstSpaces = (int) Math.pow(2, (floor)) - 1;
-            int betweenSpaces = (int) Math.pow(2, (floor + 1)) - 1;
-
-            BTreePrinter.printWhitespaces(firstSpaces);
-
-            List<Node<T>> newNodes = new ArrayList<Node<T>>();
-            for (Node<T> node : nodes) {
-                if (node != null) {
-                    System.out.print(node.element);
-                    newNodes.add(node.left);
-                    newNodes.add(node.right);
-                } else {
-                    newNodes.add(null);
-                    newNodes.add(null);
-                    System.out.print(" ");
-                }
-
-                BTreePrinter.printWhitespaces(betweenSpaces);
+    private Node<E> predecessor(Node<E> node) {
+        if (node==null) return null;
+        //前驱节点在左子树中
+        Node<E> p = node.left;
+        if (p != null) {
+            while (p.right != null) {
+                p = p.right;
             }
-            System.out.println("");
-
-            for (int i = 1; i <= endgeLines; i++) {
-                for (int j = 0; j < nodes.size(); j++) {
-                    BTreePrinter.printWhitespaces(firstSpaces - i);
-                    if (nodes.get(j) == null) {
-                        BTreePrinter.printWhitespaces(endgeLines + endgeLines + i + 1);
-                        continue;
-                    }
-
-                    if (nodes.get(j).left != null)
-                        System.out.print("/");
-                    else
-                        BTreePrinter.printWhitespaces(1);
-
-                    BTreePrinter.printWhitespaces(i + i - 1);
-
-                    if (nodes.get(j).right != null)
-                        System.out.print("\\");
-                    else
-                        BTreePrinter.printWhitespaces(1);
-
-                    BTreePrinter.printWhitespaces(endgeLines + endgeLines - i);
-                }
-
-                System.out.println("");
-            }
-
-            printNodeInternal(newNodes, level + 1, maxLevel);
+            return p;
         }
-
-        private static void printWhitespaces(int count) {
-            for (int i = 0; i < count; i++)
-                System.out.print(" ");
+        //从父节点，祖父节点中寻找前驱节点
+        while (node.parent != null && node == node.parent.left) {
+            node = node.parent;
         }
-
-        private static <T extends Comparable<?>> int maxLevel(Node<T> node) {
-            if (node == null)
-                return 0;
-
-            return Math.max(BTreePrinter.maxLevel(node.left), BTreePrinter.maxLevel(node.right)) + 1;
-        }
-
-        private static <T> boolean isAllElementsNull(List<T> list) {
-            for (Object object : list) {
-                if (object != null)
-                    return false;
-            }
-
-            return true;
-        }
-
+        return node.parent;
     }
+    private Node<E> successor(Node<E> node) {
+        if (node==null) return null;
+        //前驱节点在左子树中
+        Node<E> p = node.right;
+        if (p != null) {
+            while (p.left != null) {
+                p = p.left;
+            }
+            return p;
+        }
+        //从父节点，祖父节点中寻找前驱节点
+        while (node.parent != null && node == node.parent.right) {
+            node = node.parent;
+        }
+        return node.parent;
+    }
+
 }

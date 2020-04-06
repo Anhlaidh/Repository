@@ -7,8 +7,11 @@ package test;
  */
 public class test1 {
     public static void main(String[] args) {
-        Integer a = 10;
-        Integer b = 10;
-        System.out.println(a.compareTo(b));
+        int a = 10;
+        int b = 10;
+        while ((a = b) != 0) {
+            System.out.println(a);
+            b--;
+        }
     }
 }

@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
  */
 public class RegexDemo {
     private static String REGEX = "a*b";//*表示限定前面的a可以有0个或者多个
-    private static String INPUT = "aavfooabfooabafoobcdd";
+    private static String INPUT = "aavfooabfooabafoobcdd ";
     private static String REPLACE = "-";
 
     public static void main(String[] args) {

@@ -14,7 +14,7 @@ import java.util.Random;
 public class AVLTreeTest {
     public static void main(String[] args) {
         Random random = new Random();
-        int[] ints = random.ints(100, 0, 100).toArray();
+        int[] ints = random.ints(100, 0, 10).toArray();
         AVLTree avl = new AVLTree();
         BST bst = new BST();
         for (int i : ints) {

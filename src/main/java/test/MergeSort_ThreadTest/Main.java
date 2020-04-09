@@ -1,5 +1,7 @@
 package test.MergeSort_ThreadTest;
 
+import java.util.Random;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 
@@ -9,10 +11,8 @@ import java.util.concurrent.ForkJoinTask;
  * @date: 2020-04-08 22:41
  */
 public class Main {
-    public static void main(String[] args) {
-        int[] arr = new int[]{
-                1, 3, 2, 7, 4, 5, 8
-        };
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        int[] arr = (new Random()).ints(1000000, 0, 10000).toArray();
         ForkJoinPool pool = new ForkJoinPool(8);
         Sort sort = new Sort(arr);
         ForkJoinTask<int[]> result = pool.submit(sort);
@@ -25,13 +25,13 @@ public class Main {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        } while (result.isDone());
+        } while (!sort.isDone());
 
 
-
-        for (int i : arr) {
-            System.out.print(i+" ");
-        }
+//        int[] ints = result.get();
+//        for (int anInt : ints) {
+//            System.out.println(anInt+" ");
+//        }
 
     }
 }

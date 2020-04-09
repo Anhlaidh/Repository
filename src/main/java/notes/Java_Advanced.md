@@ -860,10 +860,104 @@ public class ThreadDemo3 {
 - 多线程死锁
     - 每个线程相互持有别人需要的锁（哲学家吃面问题）
     - 预防死锁，对资源进行等级排序
+```java
+package JavaLearning_Advanced.thread.Interrupt;
+
+import java.util.concurrent.TimeUnit;
+
+/**
+ * @Description:
+ * @author: Anhlaidh
+ * @date: 2020/4/7 0007 22:05
+ */
+public class DeadLock {
+    public static Integer r1 = 1;
+    public static Integer r2 = 2;
+    public static void main(String[] args) {
+        Thread1 t1 = new Thread1();
+        t1.start();
+        Thread2 t2 = new Thread2();
+        t2.start();
+
+    }
+
+}
+
+class Thread1 extends Thread {
+    @Override
+    public void run() {
+        //先要r1再要r2
+        synchronized (DeadLock.r1) {
+            try {
+                TimeUnit.SECONDS.sleep(3);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            synchronized (DeadLock.r2) {
+                System.out.println("Thread1 is running");
+            }
+        }
+    }
+}
+class Thread2 extends Thread {
+    @Override
+    public void run() {
+        //先要r2再要r1
+        synchronized (DeadLock.r2) {
+            try {
+                TimeUnit.SECONDS.sleep(3);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            synchronized (DeadLock.r1) {
+                System.out.println("Thread2 is running");
+            }
+        }
+    }
+}
+
+```    
+
 - 守护（后台）线程
     - 普通线程的结束，是run方法运行结束
     - 守护线程的结束，是run方法运行结束，或main函数结束
     - 守护线程永远不要访问资源，如文件或数据库等
+    
+```java
+package JavaLearning_Advanced.thread.Interrupt;
+
+/**
+ * @Description:
+ * @author: Anhlaidh
+ * @date: 2020/4/7 0007 22:19
+ */
+public class protect {
+    public static void main(String[] args) throws InterruptedException {
+        Thread3 t = new Thread3();
+        t.setDaemon(true);
+        t.start();
+        Thread.sleep(2000);
+        System.out.println("main thread is exiting");
+
+    }
+}
+
+class Thread3 extends Thread {
+    @Override
+    public void run() {
+        while (true) {
+            try {
+                Thread.sleep(300);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println("running");
+        }
+    }
+}
+
+```
+    
 - 线程查看工具jvisualvm
 
 ### 并发框架
@@ -902,8 +996,189 @@ public class ThreadDemo3 {
     - 多次执行很多很小的任务
     - 任务创建和执行过程解耦
     - 程序员无需关心线程池执行任务过程
+
+Main:
+```java
+package JavaLearning_Advanced.thread.Executor.example2;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
+
+/**
+ * @Description:
+ * @author: Anhlaidh
+ * @date: 2020-04-08 22:15
+ */
+public class SumTest {
+    public static void main(String[] args) {
+        //执行线程池
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(8);
+        List<Future<Integer>> resultList = new ArrayList<>();
+        //统计1-1000总和,分成10个任务计算,提交任务
+        for (int i = 0; i < 10; i++) {
+            SumTask calculator = new SumTask(i*100+1,(i+1)*100);
+            Future<Integer> result = executor.submit(calculator);
+            resultList.add(result);
+        }
+        //每隔50毫秒,轮询等待10个任务结束
+        do {
+            System.out.printf("Main:已经完成了多少个任务:%d\n", executor.getCompletedTaskCount());
+            for (int i = 0; i < resultList.size(); i++) {
+                Future<Integer> result = resultList.get(i);
+                System.out.printf("Main Task %d:%s\n", i, result.isDone());
+            }
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        } while (executor.getCompletedTaskCount() < resultList.size());
+        //所有任务都已经结束,综合计算结果
+        int total = 0;
+        for (int i = 0; i < resultList.size(); i++) {
+            Future<Integer> result = resultList.get(i);
+            Integer sum = null;
+            try {
+                sum = result.get();
+                total = total + sum;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("1-1000的总和" + total);
+    }
+}
+
+```
+SumTask:
+```java
+package JavaLearning_Advanced.thread.Executor.example2;
+
+import java.util.Random;
+import java.util.concurrent.Callable;
+
+/**
+ * @Description:
+ * @author: Anhlaidh
+ * @date: 2020-04-08 22:17
+ */
+public class SumTask implements Callable {
+    private int startNumber;
+    private int endNumber;
+
+    public SumTask(int startNumber, int endNumber) {
+        this.startNumber = startNumber;
+        this.endNumber = endNumber;
+    }
+
+    @Override
+    public Integer call() throws Exception {
+        int sum = 0;
+        for (int i = startNumber; i <= endNumber; i++) {
+            sum = sum + i;
+        }
+        Thread.sleep(new Random().nextInt(1000));
+        System.out.printf("%s:%d", Thread.currentThread().getName(), sum);
+        return sum;
+    }
+}
+
+```
     
-    
+### Fork-Join
+- 关键类
+    - ForkJoinPool 任务池
+    - RecursiveAction
+    - RecursiveTask
+Main:
+```java
+package JavaLearning_Advanced.thread.Fork_Join;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinTask;
+
+/**
+ * @Description:
+ * @author: Anhlaidh
+ * @date: 2020-04-09 13:37
+ */
+public class SumTest {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        //创建执行线程池
+        ForkJoinPool pool = new ForkJoinPool(8);
+        //创建任务
+        SumTask task = new SumTask(1,1000000);
+        //提交任务
+        ForkJoinTask<Long> result = pool.submit(task);
+        //等待结果
+        do {
+            System.out.printf("Main:Thread Count:%d\n", pool.getActiveThreadCount());
+            System.out.printf("Main:Parallelism:%d\n", pool.getParallelism());
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } while (!task.isDone());
+        //输出结果
+        System.out.println(result.get().toString());
+
+    }
+}
+
+```
+SumTask
+```java
+package JavaLearning_Advanced.thread.Fork_Join;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinTask;
+
+/**
+ * @Description:
+ * @author: Anhlaidh
+ * @date: 2020-04-09 13:37
+ */
+public class SumTest {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        //创建执行线程池
+        ForkJoinPool pool = new ForkJoinPool(8);
+        //创建任务
+        SumTask task = new SumTask(1,1000000);
+        //提交任务
+        ForkJoinTask<Long> result = pool.submit(task);
+        //等待结果
+        do {
+            System.out.printf("Main:Thread Count:%d\n", pool.getActiveThreadCount());
+            System.out.printf("Main:Parallelism:%d\n", pool.getParallelism());
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } while (!task.isDone());
+        //输出结果
+        System.out.println(result.get().toString());
+
+    }
+}
+
+```
+#### 主要类
+- ExecutorService,ThreadPoolExecutor,Future
+    - Executors.newCachedThreadPool/newFixedThreadPool创建线程池
+    - ExecutorService线程池服务
+    - Callable 具体的逻辑对象(线程类)
+    - Future返回结果
 
     
 ## Java网络编程

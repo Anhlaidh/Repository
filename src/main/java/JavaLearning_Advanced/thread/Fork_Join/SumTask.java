@@ -33,6 +33,7 @@ public class SumTask extends RecursiveTask<Long> {
             SumTask subTask1 = new SumTask(start, middle);
             SumTask subTask2 = new SumTask(middle+1, end);
             invokeAll(subTask1,subTask2);
+
             Long sum1 = subTask1.join();
             Long sum2 = subTask2.join();
             sum = sum1 + sum2;

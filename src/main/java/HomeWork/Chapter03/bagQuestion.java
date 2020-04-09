@@ -65,9 +65,8 @@ public class bagQuestion {
             return lists;
         }
         backtrack(items,list,lists,0);
-//        for (int i=0;i<items.size();i++){
-//
-//        }
+
+
         return lists;
     }
 
@@ -77,14 +76,8 @@ public class bagQuestion {
             return;
         }
       else {
-//            for (item item:items){
-//              if (currentList.contains(item)) continue;
-//              currentList.add(item);
-//              backtrack(items,currentList,lists);
-////                System.out.println(currentList);
-//                lists.add(new ArrayList<>(currentList));
-//              currentList.remove(currentList.size()-1);
-//          }
+
+
             for (;current<items.size();current++){
                 if (currentList.contains(items.get(current))) continue;
                 currentList.add(items.get(current));

@@ -1180,6 +1180,30 @@ public class SumTest {
     - Callable 具体的逻辑对象(线程类)
     - Future返回结果
 
+### 并发数据结构
+
+- 阻塞式集合:当集合为空或者满时,等待
+- 非阻塞式集合:当集合为空或者满时,不等待,返回null或异常
+
+
+-List
+    - Vector 同步安全,写多读少
+    - ArrayList 不安全
+    - Collections.synchronizedList(List list) 基于synchronized,效率差
+    - CopyOnWriteArrayList 读多写少,基于复制机制,非阻塞
+- Set
+    - HashSet不安全
+    - Collections.synchronizedSet(Set set)基于synchronized,效率差
+    - CopyOnWriteArraySet (基于CopyOnWriteArrayList实现),读多写少,非阻塞
+- Map
+    - Hashtable 同步安全,写多读少
+    - HashMap 不安全
+    - Collections.synchronizedMap(Map map)基于synchronized,效率差
+    - ConcurrentHashMap,读多写少,非阻塞
+- Queue&Deque
+    - ConcurrentLinkedQueue非阻塞
+    - ArrayBlockingQueue/LinkedBlockingQueue阻塞
+    
     
 ## Java网络编程
 

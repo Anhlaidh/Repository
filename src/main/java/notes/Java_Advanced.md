@@ -1850,3 +1850,12 @@ public class HttpComponentsPost {
 
 ```
 
+## Java调用其他语言
+
+### Python 
+- 解释性脚本语言
+- 目前版本3
+- Jython
+    - 将Python源码编译成JVM字节码,由JVM执行对应的字节码,可以很好的与JVM继承
+    - 不是Java与Python的连接器
+      

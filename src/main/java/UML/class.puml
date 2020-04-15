@@ -1,0 +1,9 @@
+@startuml
+
+class Student{
+-String name
++String getName()
++void setName(String name)
+}
+
+@enduml

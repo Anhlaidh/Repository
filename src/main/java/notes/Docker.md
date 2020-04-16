@@ -74,7 +74,7 @@ docker version
 docker images
 ```
 - 当前主机上的镜像 
-- `-a`全部镜像
+- `-a`全部镜像(含中间镜像层)
 - `-q`imageId
 - `--digests` 详细信息
 - `--no-trunc` 显示完整的镜像信息
@@ -86,5 +86,108 @@ docker search xxx
 - `-s [nums]`点赞数大于nums的
 ```shell script
 docker pull xxx:[titile:默认不加]
+docker rmi xxx
 ```
+- `pull`  拉取镜像
+- `rmi` 
+    - 删除镜像,要保证镜像以关闭
+    - `-f`强制删除
+    -  可多个删除
+    - 删除全部 `docker rmi -f $(docker images -qa`
     
+### 容器命令
+
+以windows的vmare中的centos中的centos为例
+
+#### 新建并启动容器
+```shell script
+docker run[OPTIONS] IMAGE [COMMAND]{ARG...}
+```
+- `--name` 指定NAME
+- `-d` 后台运行容器,并返回容器ID,也即启动守护式容器
+- `-i`以交互模式运行容器,通常与-t同时使用
+- `-t`为容器重新分配一个伪输入终端
+#### 列出当前所有正住运行的容器
+```shell script
+docker ps [OPTIONS]
+```
+- `-q` 静默模式,只显示容器编号
+- `-l` 显示最近创建过的容器
+- `-a` 列出当前所有正在运行的容器+历史运行过的
+- `-n` 显示最近n个创建的容器
+- `--no-trunc` 不截断输出
+#### 操作容器
+- 退出容器
+    1. `exit`关闭容器并退出
+    2. `Ctrl`+`p`+`q` 退出不关闭
+- 启动容器
+    - `docker start xxx` id或容器名
+- 重启容器
+    - `docker restart xxx`id或容器名
+- 停止
+    - `docker stop xxx` 停止容器
+    - `docker kill xxx` 强制停止容器
+    
+- 删除容器
+`docker rm xxx`没有i
+    - `-f` 强制删除
+    - 删除多个容器
+        - `docker rm -f $(docker ps -a -q)`
+        - `docker ps -a -q|xargs docker rm`
+        
+### 重要命令
+1. 启动
+    - `docker run -d centos` 后台启动centos,但会被瞬间退出
+        - docker 容器后台运行,必须要有前台进程
+        - 容器运行的命令如果不是那些一直挂起的命令(top,tail),会自动退出
+2. 查看容器日志
+    - `docker logs -f -t --tail n xxx`
+        - `-t`是加入时间戳
+        - `-f` 跟随最新的日志打印
+        - `--tail` 数字显示最后多少条
+3. 查看容器内运行的进程
+    - `docker top xxx`相当于linux的top
+4. 查看容器内部细节
+    - `docker inspect 容器ID`
+    
+5. 进入正在运行的容器并以命令行交互
+    - `docker exec -it 容器ID bashShell`
+        - 是在容器中打开新的终端,并且可以启动新的进程
+    - 重新进入`docker attach 容器ID`
+        - 直接进入容器启动命令的终端,不会启动新的进程 
+6. 从容器内拷贝文件到宿主机
+    - `docker cp 容器ID:路径 宿主机路径:`
+
+## 镜像原理
+
+- 是什么: 
+    1.UnionFS(联合文件系统) bootfs rootfs
+    2. Docker镜像加载原理
+    3. 分层的镜像
+- 特点
+    1. Docker镜像都是只读的
+    2. 当容器启动时,一个新的可写层被加载到镜像的顶部.这一层通常被称作"容器层","容器层"之下的都叫镜像层
+
+- tomcat
+    - `docker run -it -p 8888:8080 tomcat ` 端口映射
+
+- 提交commit
+    - `docker commit -m="提交的信息" -a="作者" 容器ID 要创建的镜像名:[标签名]`
+
+## Docker容器数据卷
+
+- 是什么
+    - 保存数据 类似docker cp
+- 特点
+    1. 数据卷可在容器之间共享或重用数据
+    2. 卷中的更改可以直接生效
+    3. 数据卷中的更改不会包含在镜像的更新中
+    4. 数据卷的生命周期一直持续到没有容器继续使用它为止
+- 数据卷 容器内添加
+    - 直接命令添加
+        - `docker run -it -v /宿主机绝对路径目录:/容器目录 镜像名` 如果目录不存在,会创建目录
+        - `docker inspect` 查看详细信息,看是否挂载成功
+        - `docker run -it -v /宿主机绝对路径目录:/容器内目录:ro 镜像名` 只读
+         
+    - dockerFile添加
+    备注:

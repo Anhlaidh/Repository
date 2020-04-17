@@ -7,7 +7,7 @@ package exam.sword;
  */
 public class jumpII {
     public static void main(String[] args) {
-        System.out.println(JumpFloorII(2));
+        System.out.println(JumpFloorII(6));
 
     }
     public static  int JumpFloorII(int target) {

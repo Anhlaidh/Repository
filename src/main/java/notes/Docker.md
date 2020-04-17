@@ -1,7 +1,7 @@
 # Docker
 
 - CentOS6.5及以上
-
+[TOC]
 ## 概念&安装
 
 - 镜像 一个只读的模板,创建Docker容器
@@ -61,7 +61,7 @@ sudo systemctl restart docker
 |运行性能|几乎无额外性能损失|操作系统额外的CPU,内存消耗|
 |移植性|灵活,轻便,适应于Linux|面向硬件运维者|
 |部署速度|快速,秒级|较慢,10s以上|
-
+[TOC]
 ## 常用命令
 ### 帮助命令
 ```shell script
@@ -191,3 +191,84 @@ docker ps [OPTIONS]
          
     - dockerFile添加
     备注:
+    
+
+## DockerFile
+
+### 直接命令添加
+
+### DockerFile添加
+
+1. 根目录下新建mydocker并进入
+2. 可在Dockerfile中使用VOLUME指令来给镜像添加一个或多个数据卷
+3. File构建
+4. build后生成镜像
+5. run容器
+
+### 数据卷容器
+
+命名的容器挂载数据卷,其他容器通过挂载这个(父容器)实现数据共享,挂在数据卷的容器,称之为数据卷容器
+
+- 容器间传递共享(--volumes-from)
+    - 先启动一个父容器dk01
+    - dk02/dk03 (集成)共享dk01 
+dk01
+ ```json
+ "Mounts": [
+            {
+                "Type": "volume",
+                "Name": "bcae3861c5c98efb330484995446b084bab5e63ce69cb8c0d3d0a4d650caa7d4",
+                "Source": "/var/lib/docker/volumes/bcae3861c5c98efb330484995446b084bab5e63ce69cb8c0d3d0a4d650caa7d4/_data",
+                "Destination": "/dataVolumeContainer2",
+                "Driver": "local",
+                "Mode": "",
+                "RW": true,
+                "Propagation": ""
+            },
+            {
+                "Type": "volume",
+                "Name": "e072f0984f04bc3342bcf500549f2533c5b8b6a90f41fd60bd049048b46e84cb",
+                "Source": "/var/lib/docker/volumes/e072f0984f04bc3342bcf500549f2533c5b8b6a90f41fd60bd049048b46e84cb/_data",
+                "Destination": "/dataVolumeContainer1",
+                "Driver": "local",
+                "Mode": "",
+                "RW": true,
+                "Propagation": ""
+            }
+        ],
+
+```
+dk02
+```json
+ "Mounts": [
+            {
+                "Type": "volume",
+                "Name": "e072f0984f04bc3342bcf500549f2533c5b8b6a90f41fd60bd049048b46e84cb",
+                "Source": "/var/lib/docker/volumes/e072f0984f04bc3342bcf500549f2533c5b8b6a90f41fd60bd049048b46e84cb/_data",
+                "Destination": "/dataVolumeContainer1",
+                "Driver": "local",
+                "Mode": "",
+                "RW": true,
+                "Propagation": ""
+            },
+            {
+                "Type": "volume",
+                "Name": "bcae3861c5c98efb330484995446b084bab5e63ce69cb8c0d3d0a4d650caa7d4",
+                "Source": "/var/lib/docker/volumes/bcae3861c5c98efb330484995446b084bab5e63ce69cb8c0d3d0a4d650caa7d4/_data",
+                "Destination": "/dataVolumeContainer2",
+                "Driver": "local",
+                "Mode": "",
+                "RW": true,
+                "Propagation": ""
+            }
+        ],
+
+```
+
+挂载对应一致,实现共享数据
+
+### DockerFile 规范
+1. 每条保留字指令都必须为大写字母且后面至少跟随一个参数
+2. 指令按照从上到下,顺序执行
+3. `#`表示注释
+4. 每条指令都会创建一个新的镜像层,并对镜像进行提交
